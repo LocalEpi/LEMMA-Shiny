@@ -1,0 +1,12 @@
+name: LEMMA-Shiny
+title: LEMMA-Shiny
+username:
+account: slwu89
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3981108
+bundleId: 4482012
+url: https://slwu89.shinyapps.io/LEMMA-Shiny/
+when: 1618612308.16658
+asMultiple: FALSE
+asStatic: FALSE
