@@ -61,11 +61,20 @@ server <- function(input, output, session) {
     })
     
     # reactive: LEMMA run from excel upload
-    LEMMA_excel_run <- eventReactive(input$LEMMA_xlsx, {
+    # LEMMA_excel_run <- eventReactive(input$LEMMA_xlsx, {
+    #     req(LEMMA_inputs())
+    #     id <- showNotification("Running LEMMA", duration = NULL, closeButton = FALSE,type = "message")
+    #     on.exit(removeNotification(id), add = TRUE)
+    #     LEMMA:::CredibilityIntervalData(inputs = LEMMA_inputs(),fit.to.data = NULL)
+    # })
+    
+    LEMMA_excel_run <- reactiveVal()
+    observeEvent(input$LEMMA_xlsx, {
+        # browser()
         req(LEMMA_inputs())
         id <- showNotification("Running LEMMA", duration = NULL, closeButton = FALSE,type = "message")
         on.exit(removeNotification(id), add = TRUE)
-        LEMMA:::CredibilityIntervalData(inputs = LEMMA_inputs(),fit.to.data = NULL)
+        LEMMA_excel_run(LEMMA:::CredibilityIntervalData(inputs = LEMMA_inputs(),fit.to.data = NULL))
     })
     
     # reactive: LEMMA excel output
@@ -131,28 +140,8 @@ server <- function(input, output, session) {
         contentType = "application/pdf"
     )
     
-    # DEBUGGING
-    output$table <- renderTable({
-        LEMMA_excel_run()$projection
-    })
+    # # DEBUGGING
+    # output$table <- renderTable({
+    #     LEMMA_excel_run()$projection
+    # })
 }
-
-# # Define server logic required to draw a histogram
-# shinyServer(function(input, output) {
-# 
-#     output$distPlot <- renderPlot({
-# 
-#         # generate bins based on input$bins from ui.R
-#         x    <- faithful[, 2]
-#         bins <- seq(min(x), max(x), length.out = input$bins + 1)
-# 
-#         # draw the histogram with the specified number of bins
-#         hist(x, breaks = bins, col = 'darkgray', border = 'white')
-# 
-#     })
-#     
-#     output$textout <- renderText({
-#         paste0("The key: ",Sys.getenv("AWS_ACCESS_KEY_ID"))
-#     })
-# 
-# })
