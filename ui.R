@@ -11,8 +11,8 @@
 
 
 ui <- tagList(
-    # useShinyjs(),
-    # shinyFeedback::useShinyFeedback(),
+    useShinyjs(),
+    shinyFeedback::useShinyFeedback(),
     shiny::navbarPage(
         "LEMMA (Local Epidemic Modeling for Management and Action)",   
         tabPanel("Model Structure", 

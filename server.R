@@ -36,45 +36,71 @@ server <- function(input, output, session) {
     # reactive elements
     # --------------------------------------------------------------------------------
     
-    # reactive: excel upload
-    xlsx_input <- reactive({
-        req(input$upload)
-        ext <- tools::file_ext(input$upload$name)
-        if(ext != "xlsx"){
-            validate("Invalid file; Please upload a .xlsx file")
-        }
-        sheets <- readxl::excel_sheets(path = normalizePath(input$upload$datapath))
-        if(!identical(expected_sheets,sheets)){
-            validate(cat("Invalid file; File needs 10 named sheets: ",paste0(expected_sheets,collapse = ", ")))
-        }
-        id <- showNotification("Reading data", duration = NULL, closeButton = FALSE,type = "message")
-        on.exit(removeNotification(id), add = TRUE)
-        LEMMA:::ReadInputs(path = input$upload$datapath)
-    })
-    
-    # reactive: inputs
-    LEMMA_inputs <- reactive({
-        req(xlsx_input())
-        id <- showNotification("Generating LEMMA parameters", duration = NULL, closeButton = FALSE,type = "message")
-        on.exit(removeNotification(id), add = TRUE)
-        LEMMA:::ProcessSheets(xlsx_input())
-    })
-    
-    # reactive: LEMMA run from excel upload
-    # LEMMA_excel_run <- eventReactive(input$LEMMA_xlsx, {
-    #     req(LEMMA_inputs())
-    #     id <- showNotification("Running LEMMA", duration = NULL, closeButton = FALSE,type = "message")
+    # # reactive: excel upload
+    # xlsx_input <- reactive({
+    #     req(input$upload)
+    #     ext <- tools::file_ext(input$upload$name)
+    #     if(ext != "xlsx"){
+    #         validate("Invalid file; Please upload a .xlsx file")
+    #     }
+    #     sheets <- readxl::excel_sheets(path = normalizePath(input$upload$datapath))
+    #     if(!identical(expected_sheets,sheets)){
+    #         validate(cat("Invalid file; File needs 10 named sheets: ",paste0(expected_sheets,collapse = ", ")))
+    #     }
+    #     id <- showNotification("Reading data", duration = NULL, closeButton = FALSE,type = "message")
     #     on.exit(removeNotification(id), add = TRUE)
-    #     LEMMA:::CredibilityIntervalData(inputs = LEMMA_inputs(),fit.to.data = NULL)
+    #     LEMMA:::ReadInputs(path = input$upload$datapath)
+    # })
+    # 
+    # # reactive: inputs
+    # LEMMA_inputs <- reactive({
+    #     req(xlsx_input())
+    #     id <- showNotification("Generating LEMMA parameters", duration = NULL, closeButton = FALSE,type = "message")
+    #     on.exit(removeNotification(id), add = TRUE)
+    #     LEMMA:::ProcessSheets(xlsx_input())
     # })
     
+    # inputs
+    LEMMA_inputs <- reactiveVal()
+    observeEvent(input$upload, {
+        # browser()
+        # req(input$upload)
+        
+        ext <- tools::file_ext(input$upload$name)
+        shinyFeedback::feedback(inputId = "upload",show = ext != "xlsx",text = "Invalid file; Please upload a .xlsx file",color = "red")
+        if (ext != "xlsx") {
+            # validate("Invalid file; Please upload a .xlsx file")
+            req(FALSE)
+        }
+        # shinyFeedback::feedback(inputId = "upload",show = {ext != "xlsx"},text = "Invalid file; Please upload a .xlsx file",color = "red")
+
+        sheets <- readxl::excel_sheets(path = normalizePath(input$upload$datapath))
+        shinyFeedback::feedback(inputId = "upload",show = !identical(expected_sheets, sheets),text = "Invalid file; File needs 10 named sheets",color = "red")
+        if (!identical(expected_sheets, sheets)) {
+            req(FALSE)
+            # validate( cat("Invalid file; File needs 10 named sheets: ",paste0(expected_sheets,collapse = ", ")))
+        }
+        
+        id1 <- showNotification("Reading data", duration = NULL, closeButton = FALSE,type = "message")
+        on.exit(removeNotification(id1), add = TRUE)
+        input <- LEMMA:::ReadInputs(path = input$upload$datapath)
+        
+        id2 <- showNotification("Generating LEMMA parameters", duration = NULL, closeButton = FALSE,type = "message")
+        on.exit(removeNotification(id2), add = TRUE)
+        
+        LEMMA_inputs(LEMMA:::ProcessSheets(input))
+    })
+    
+    
+    # reactive: LEMMA run from excel upload
     LEMMA_excel_run <- reactiveVal()
     observeEvent(input$LEMMA_xlsx, {
-        # browser()
         req(LEMMA_inputs())
+        shinyjs::disable("LEMMA_xlsx")
         id <- showNotification("Running LEMMA", duration = NULL, closeButton = FALSE,type = "message")
         on.exit(removeNotification(id), add = TRUE)
         LEMMA_excel_run(LEMMA:::CredibilityIntervalData(inputs = LEMMA_inputs(),fit.to.data = NULL))
+        shinyjs::enable("LEMMA_xlsx")
     })
     
     # reactive: LEMMA excel output
@@ -91,7 +117,7 @@ server <- function(input, output, session) {
     
     # output: checker to let users know excel uploaded
     output$xlsx_check_txt <- renderText({
-        req(xlsx_input())
+        req(LEMMA_inputs())
         paste0("File successfully uploaded, size ",signif(input$upload$size/1e3,digits = 6),"Kb")
     })
     

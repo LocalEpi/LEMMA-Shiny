@@ -4,8 +4,8 @@ Previous versions of LEMMA calculated crediblity intervals and reported quantile
 ### PDF output
 The main output is provided in pdf format. Plots include short term and long term projections for number hospitalized, in the ICU, cumulative deaths, new hospital admissions, detected cases and seroprevalence (these are only shown for categories in which data was entered on the Data sheet). A plot of Re over time is shown up to 14 days before the last observed data. It is difficult to estimate Re beyond that date because it takes at least two weeks for changes in Re to be reflected in hospitalizations.
 
-<img src="figures/sf_output.png" width="75%">
-<img src="figures/sf_output_lt.png" width="75%">
+<img src="figures/sf_output.png" width="60%">
+<img src="figures/sf_output_lt.png" width="60%">
 
 Detailed outputs are provided in Excel format.  
 
