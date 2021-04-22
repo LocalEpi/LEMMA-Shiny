@@ -97,10 +97,12 @@ server <- function(input, output, session) {
     observeEvent(input$LEMMA_xlsx, {
         req(LEMMA_inputs())
         shinyjs::disable("LEMMA_xlsx")
-        id <- showNotification("Running LEMMA", duration = NULL, closeButton = FALSE,type = "message")
-        on.exit(removeNotification(id), add = TRUE)
+        shinybusy::show_modal_spinner(spin = "fading-circle",text = "Running LEMMA")
+        # id <- showNotification("Running LEMMA", duration = NULL, closeButton = FALSE,type = "message")
+        # on.exit(removeNotification(id), add = TRUE)
         LEMMA_excel_run(LEMMA:::CredibilityIntervalData(inputs = LEMMA_inputs(),fit.to.data = NULL))
         shinyjs::enable("LEMMA_xlsx")
+        shinybusy::remove_modal_spinner()
     })
     
     # reactive: LEMMA excel output

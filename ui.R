@@ -11,12 +11,11 @@
 
 
 ui <- tagList(
-    useShinyjs(),
+    shinyjs::useShinyjs(),
     shinyFeedback::useShinyFeedback(),
     shiny::navbarPage(
         "LEMMA (Local Epidemic Modeling for Management and Action)",   
         tabPanel("Model Structure", 
-                 # includeMarkdown(path = normalizePath(path = paste0(path.package("LEMMA"),"/shiny/src/SEIRModel.md")))
                  includeMarkdown(path = "src/SEIRModel.md")
         ),
         # --------------------------------------------------------------------------------
@@ -55,22 +54,13 @@ ui <- tagList(
                                   downloadButton("download_xlsx_out", "Download Excel output")
                            ),
                            column(8,
-                                  # tableOutput("table"),
                                   includeMarkdown(path = "src/excel_output.md")
                            )
                        )
                    )
         ),
         # --------------------------------------------------------------------------------
-        # navbar: something 1
-        # --------------------------------------------------------------------------------
-        tabPanel("debugging", 
-                 fluidRow(
-                     tableOutput("files")
-                 )
-        ),
-        # --------------------------------------------------------------------------------
-        # navbar: something 2
+        # navbar: Forecasting
         # --------------------------------------------------------------------------------
         navbarMenu("subpanels", 
                    tabPanel("panel 4a", "four-a"),
