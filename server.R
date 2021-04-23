@@ -15,7 +15,7 @@ library(openxlsx)
 library(markdown)
 library(parallel)
 library(aws.s3)
-library(LEMMA)
+library(LEMMA) # must be installed like this for shinyapps to work devtools::install_github(repo = "LocalEpi/LEMMA")
 library(LEMMA.forecasts) # must be installed like this for shinyapps to work devtools::install_github(repo = "LocalEpi/LEMMA-Forecasts",subdir = "LEMMA.forecasts")
 
 expected_sheets <- c(
