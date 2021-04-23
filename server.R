@@ -13,6 +13,7 @@ library(data.table)
 library(readxl)
 library(markdown)
 library(LEMMA)
+library(LEMMA.forecasts)
 
 expected_sheets <- c(
     "Parameters with Distributions","Interventions","Model Inputs","Data",
@@ -20,15 +21,26 @@ expected_sheets <- c(
     "PUI Details","Internal"
 )
 
-LEMMA_forecast <- new.env()
-source(
-    file = "https://raw.githubusercontent.com/LocalEpi/LEMMA-Forecasts/master/Code/GetCountyData.R",
-    local = LEMMA_forecast
+CA_counties <- c(
+    "Los Angeles", "San Diego", "Orange", "Riverside", "San Bernardino", "Santa Clara",
+    "Alameda", "Sacramento", "Contra Costa", "Fresno", "San Francisco", "Kern",
+    "Ventura", "San Mateo", "San Joaquin", "Stanislaus", "Sonoma", "Tulare",
+    "Santa Barbara", "Solano", "Monterey", "Placer", "San Luis Obispo", "Santa Cruz",
+    "Merced", "Marin", "Butte", "Yolo", "El Dorado", "Imperial",
+    "Shasta", "Madera", "Kings", "Napa", "Humboldt", "Nevada",
+    "Mendocino", "Yuba", "Lake", "Tehama", "San Benito", "Tuolumne",
+    "Siskiyou", "Del Norte", "Colusa"
 )
-source(
-    file = "https://raw.githubusercontent.com/LocalEpi/LEMMA-Forecasts/master/Code/RunCountiesFromBeginning.R",
-    local = LEMMA_forecast
-)
+
+# LEMMA_forecast <- new.env()
+# source(
+#     file = "https://raw.githubusercontent.com/LocalEpi/LEMMA-Forecasts/master/Code/GetCountyData.R",
+#     local = LEMMA_forecast
+# )
+# source(
+#     file = "https://raw.githubusercontent.com/LocalEpi/LEMMA-Forecasts/master/Code/RunCountiesFromBeginning.R",
+#     local = LEMMA_forecast
+# )
 
 server <- function(input, output, session) {
     
@@ -168,8 +180,28 @@ server <- function(input, output, session) {
         contentType = "application/pdf"
     )
     
-    # # DEBUGGING
-    # output$table <- renderTable({
-    #     LEMMA_excel_run()$projection
-    # })
+    output$forecast_select_county_txt <- renderPrint({
+        input$forecast_select_county
+    })
+    
+    # --------------------------------------------------------------------------------
+    # observers
+    # --------------------------------------------------------------------------------
+    
+    observeEvent(input$forecast_select_county_selall, {
+        updateMultiInput(
+            session = session,
+            inputId = "forecast_select_county",
+            selected = CA_counties
+        )
+    })
+    
+    observeEvent(input$forecast_select_county_sel0, {
+        updateMultiInput(
+            session = session,
+            inputId = "forecast_select_county",
+            selected = character(0)
+        )
+    })
+    
 }

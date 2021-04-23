@@ -9,6 +9,16 @@
 
 # library(shiny)
 
+CA_counties <- c(
+    "Los Angeles", "San Diego", "Orange", "Riverside", "San Bernardino", "Santa Clara",
+    "Alameda", "Sacramento", "Contra Costa", "Fresno", "San Francisco", "Kern",
+    "Ventura", "San Mateo", "San Joaquin", "Stanislaus", "Sonoma", "Tulare",
+    "Santa Barbara", "Solano", "Monterey", "Placer", "San Luis Obispo", "Santa Cruz",
+    "Merced", "Marin", "Butte", "Yolo", "El Dorado", "Imperial",
+    "Shasta", "Madera", "Kings", "Napa", "Humboldt", "Nevada",
+    "Mendocino", "Yuba", "Lake", "Tehama", "San Benito", "Tuolumne",
+    "Siskiyou", "Del Norte", "Colusa"
+)
 
 ui <- tagList(
     shinyjs::useShinyjs(),
@@ -60,13 +70,44 @@ ui <- tagList(
                    )
         ),
         # --------------------------------------------------------------------------------
-        # navbar: Forecasting
+        # tabPanel: Forecasts
         # --------------------------------------------------------------------------------
-        navbarMenu("subpanels", 
-                   tabPanel("panel 4a", "four-a"),
-                   tabPanel("panel 4b", "four-b"),
-                   tabPanel("panel 4c", "four-c")
+        tabPanel(
+            title = "Forecasts",
+            fluidRow(
+                column(
+                    width = 6,
+                    multiInput(
+                        inputId = "forecast_select_county", label = "California Counties:",
+                        choices = CA_counties,
+                        selected = "Alameda", width = "100%"
+                    ),
+                    actionButton(inputId = "forecast_select_county_selall",label = "Select all"),
+                    actionButton(inputId = "forecast_select_county_sel0",label = "Select none"),
+                    hr(),
+                    verbatimTextOutput(outputId = "forecast_select_county_txt")
+                ),
+                column(
+                    width = 6,
+                    includeMarkdown(path = "src/forecasts.md")
+                )
+            )
+        ),
+        # --------------------------------------------------------------------------------
+        # tabPanel: Scenarios
+        # --------------------------------------------------------------------------------
+        tabPanel(
+            "Scenarios",
+            includeMarkdown(path = "src/SEIRModel.md")
         )
+        # # --------------------------------------------------------------------------------
+        # # navbar: Forecasting
+        # # --------------------------------------------------------------------------------
+        # navbarMenu("Forecasts", 
+        #            tabPanel("panel 4a", "four-a"),
+        #            tabPanel("panel 4b", "four-b"),
+        #            tabPanel("panel 4c", "four-c")
+        # )
     )
 )
 
