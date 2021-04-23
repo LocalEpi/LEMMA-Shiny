@@ -12,6 +12,7 @@ library(tools)
 library(data.table)
 library(readxl)
 library(markdown)
+library(parallel)
 library(LEMMA)
 library(LEMMA.forecasts)
 
@@ -103,7 +104,6 @@ server <- function(input, output, session) {
         LEMMA_inputs(LEMMA:::ProcessSheets(input))
     })
     
-    
     # reactive: LEMMA run from excel upload
     LEMMA_excel_run <- reactiveVal()
     observeEvent(input$LEMMA_xlsx, {
@@ -123,6 +123,53 @@ server <- function(input, output, session) {
         id <- showNotification("Creating .xlsx output file", duration = NULL, closeButton = FALSE,type = "message")
         on.exit(removeNotification(id), add = TRUE)
         LEMMA:::GetExcelOutputData(LEMMA_excel_run()$projection, LEMMA_excel_run()$fit.to.data, LEMMA_excel_run()$inputs)
+    })
+    
+    # Forecasting
+    observeEvent(input$forecast_run, {
+        browser()
+        req(length(input$forecast_select_county) > 0)
+        shinyjs::disable("forecast_run")
+        shinybusy::show_modal_spinner(spin = "fading-circle",text = "Running LEMMA forecasts")
+        
+        ncounty <- length(input$forecast_select_county)
+        writedir <- tempdir(check = TRUE)
+        if (length(list.dirs(writedir)) > 1) {
+            unlink(
+                x = paste0(writedir,"/Forecasts"),recursive = TRUE
+            )
+        }
+        
+        county.dt <- LEMMA.forecasts:::GetCountyData()
+        max.date <- LEMMA.forecasts:::Get1(county.dt[!is.na(hosp.conf), max(date), by = "county"]$V1)
+
+        doses.dt <- LEMMA.forecasts:::GetDosesData(remote = TRUE)
+        
+        county.by.pop <- unique(county.dt[!is.na(population), .(county, population)]) #NA population if no hospitalizations
+        data.table::setorder(county.by.pop, -population)
+        county.set <- county.by.pop[, county]
+        
+        county.set <- setdiff(county.set, "Colusa")
+        
+        if (ncounty > 1) {
+            
+            invisible(parallel::mclapply(
+                X = input$forecast_select_county, FUN = LEMMA.forecasts::RunOneCounty, 
+                county.dt = county.dt, doses.dt = doses.dt, remote = TRUE, writedir = writedir, 
+                mc.cores = parallel::detectCores() - 1
+            ))
+            
+            
+        } else {
+            
+            invisible(LEMMA.forecasts::RunOneCounty(
+                county1 = input$forecast_select_county, county.dt = county.dt,doses.dt = doses.dt,remote = TRUE,writedir = writedir
+            ))
+            
+        }
+        
+        shinyjs::enable("forecast_run")
+        shinybusy::remove_modal_spinner()
     })
     
     # --------------------------------------------------------------------------------
@@ -179,10 +226,6 @@ server <- function(input, output, session) {
         },
         contentType = "application/pdf"
     )
-    
-    output$forecast_select_county_txt <- renderPrint({
-        input$forecast_select_county
-    })
     
     # --------------------------------------------------------------------------------
     # observers
