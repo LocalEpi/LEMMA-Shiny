@@ -14,8 +14,9 @@ library(readxl)
 library(openxlsx)
 library(markdown)
 library(parallel)
+library(aws.s3)
 library(LEMMA)
-library(LEMMA.forecasts)
+library(LEMMA.forecasts) # must be installed like this for shinyapps to work devtools::install_github(repo = "LocalEpi/LEMMA-Forecasts",subdir = "LEMMA.forecasts")
 
 expected_sheets <- c(
     "Parameters with Distributions","Interventions","Model Inputs","Data",

@@ -5,8 +5,8 @@ account: slwu89
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3981108
-bundleId: 4506927
+bundleId: 4511960
 url: https://slwu89.shinyapps.io/LEMMA-Shiny/
-when: 1619126202.05719
+when: 1619221122.98541
 asMultiple: FALSE
 asStatic: FALSE
