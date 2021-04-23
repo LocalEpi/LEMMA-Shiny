@@ -77,7 +77,7 @@ ui <- tagList(
             fluidRow(
                 column(
                     width = 6,
-                    multiInput(
+                    shinyWidgets::multiInput(
                         inputId = "forecast_select_county", label = "California Counties:",
                         choices = CA_counties,
                         selected = "Alameda", width = "100%"

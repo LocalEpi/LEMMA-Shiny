@@ -140,7 +140,7 @@ server <- function(input, output, session) {
             )
         }
         
-        county.dt <- LEMMA.forecasts:::GetCountyData()
+        county.dt <- LEMMA.forecasts:::GetCountyData(remote = TRUE)
         max.date <- LEMMA.forecasts:::Get1(county.dt[!is.na(hosp.conf), max(date), by = "county"]$V1)
 
         doses.dt <- LEMMA.forecasts:::GetDosesData(remote = TRUE)
@@ -232,7 +232,7 @@ server <- function(input, output, session) {
     # --------------------------------------------------------------------------------
     
     observeEvent(input$forecast_select_county_selall, {
-        updateMultiInput(
+        shinyWidgets::updateMultiInput(
             session = session,
             inputId = "forecast_select_county",
             selected = CA_counties
@@ -240,7 +240,7 @@ server <- function(input, output, session) {
     })
     
     observeEvent(input$forecast_select_county_sel0, {
-        updateMultiInput(
+        shinyWidgets::updateMultiInput(
             session = session,
             inputId = "forecast_select_county",
             selected = character(0)
