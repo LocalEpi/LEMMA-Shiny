@@ -86,6 +86,9 @@ ui <- tagList(
                     actionButton(inputId = "forecast_select_county_sel0",label = "Select none"),
                     hr(),
                     actionButton("forecast_run", "Run Forecasts", class = "btn btn-primary btn-lg btn-block"),
+                    hr(),
+                    downloadButton("forecast_download_pdf_out", "Download PDF output"),
+                    downloadButton("forecast_download_xlsx_out", "Download Excel output")
                 ),
                 column(
                     width = 6,

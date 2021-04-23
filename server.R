@@ -46,37 +46,14 @@ CA_counties <- c(
 server <- function(input, output, session) {
     
     # --------------------------------------------------------------------------------
-    # reactive elements
-    # --------------------------------------------------------------------------------
-    
-    # # reactive: excel upload
-    # xlsx_input <- reactive({
-    #     req(input$upload)
-    #     ext <- tools::file_ext(input$upload$name)
-    #     if(ext != "xlsx"){
-    #         validate("Invalid file; Please upload a .xlsx file")
-    #     }
-    #     sheets <- readxl::excel_sheets(path = normalizePath(input$upload$datapath))
-    #     if(!identical(expected_sheets,sheets)){
-    #         validate(cat("Invalid file; File needs 10 named sheets: ",paste0(expected_sheets,collapse = ", ")))
-    #     }
-    #     id <- showNotification("Reading data", duration = NULL, closeButton = FALSE,type = "message")
-    #     on.exit(removeNotification(id), add = TRUE)
-    #     LEMMA:::ReadInputs(path = input$upload$datapath)
-    # })
+    #
+    #   Excel Interface tab
     # 
-    # # reactive: inputs
-    # LEMMA_inputs <- reactive({
-    #     req(xlsx_input())
-    #     id <- showNotification("Generating LEMMA parameters", duration = NULL, closeButton = FALSE,type = "message")
-    #     on.exit(removeNotification(id), add = TRUE)
-    #     LEMMA:::ProcessSheets(xlsx_input())
-    # })
+    # --------------------------------------------------------------------------------
     
     # inputs
     LEMMA_inputs <- reactiveVal()
     observeEvent(input$upload, {
-        # browser()
         # req(input$upload)
         
         ext <- tools::file_ext(input$upload$name)
@@ -123,53 +100,6 @@ server <- function(input, output, session) {
         id <- showNotification("Creating .xlsx output file", duration = NULL, closeButton = FALSE,type = "message")
         on.exit(removeNotification(id), add = TRUE)
         LEMMA:::GetExcelOutputData(LEMMA_excel_run()$projection, LEMMA_excel_run()$fit.to.data, LEMMA_excel_run()$inputs)
-    })
-    
-    # Forecasting
-    observeEvent(input$forecast_run, {
-        browser()
-        req(length(input$forecast_select_county) > 0)
-        shinyjs::disable("forecast_run")
-        shinybusy::show_modal_spinner(spin = "fading-circle",text = "Running LEMMA forecasts")
-        
-        ncounty <- length(input$forecast_select_county)
-        writedir <- tempdir(check = TRUE)
-        if (length(list.dirs(writedir)) > 1) {
-            unlink(
-                x = paste0(writedir,"/Forecasts"),recursive = TRUE
-            )
-        }
-        
-        county.dt <- LEMMA.forecasts:::GetCountyData(remote = TRUE)
-        max.date <- LEMMA.forecasts:::Get1(county.dt[!is.na(hosp.conf), max(date), by = "county"]$V1)
-
-        doses.dt <- LEMMA.forecasts:::GetDosesData(remote = TRUE)
-        
-        county.by.pop <- unique(county.dt[!is.na(population), .(county, population)]) #NA population if no hospitalizations
-        data.table::setorder(county.by.pop, -population)
-        county.set <- county.by.pop[, county]
-        
-        county.set <- setdiff(county.set, "Colusa")
-        
-        if (ncounty > 1) {
-            
-            invisible(parallel::mclapply(
-                X = input$forecast_select_county, FUN = LEMMA.forecasts::RunOneCounty, 
-                county.dt = county.dt, doses.dt = doses.dt, remote = TRUE, writedir = writedir, 
-                mc.cores = parallel::detectCores() - 1
-            ))
-            
-            
-        } else {
-            
-            invisible(LEMMA.forecasts::RunOneCounty(
-                county1 = input$forecast_select_county, county.dt = county.dt,doses.dt = doses.dt,remote = TRUE,writedir = writedir
-            ))
-            
-        }
-        
-        shinyjs::enable("forecast_run")
-        shinybusy::remove_modal_spinner()
     })
     
     # --------------------------------------------------------------------------------
@@ -227,6 +157,74 @@ server <- function(input, output, session) {
         contentType = "application/pdf"
     )
     
+
+    # --------------------------------------------------------------------------------
+    # 
+    #   Forecasting tab
+    # 
+    # --------------------------------------------------------------------------------
+    
+    # Forecasting
+    forecast_run <- reactiveVal(value = FALSE)
+    forecast_dir <- reactiveVal(value = NULL)
+    observeEvent(input$forecast_run, {
+        
+        # browser()
+        req(length(input$forecast_select_county) > 0)
+        shinyjs::disable("forecast_run")
+        shinybusy::show_modal_spinner(spin = "fading-circle",text = "Running LEMMA forecasts")
+        
+        ncounty <- length(input$forecast_select_county)
+        writedir <- tempdir(check = TRUE)
+        forecast_dir(writedir)
+        if (length(list.dirs(writedir)) > 1) {
+            unlink(
+                x = paste0(writedir,"/Forecasts"),recursive = TRUE
+            )
+        }
+        
+        id1 <- showNotification("Downloading case data", duration = NULL, closeButton = FALSE,type = "message")
+        on.exit(removeNotification(id1), add = TRUE)
+        
+        county.dt <- LEMMA.forecasts:::GetCountyData(remote = TRUE)
+        max.date <- LEMMA.forecasts:::Get1(county.dt[!is.na(hosp.conf), max(date), by = "county"]$V1)
+        
+        id2 <- showNotification("Downloading vaccination data", duration = NULL, closeButton = FALSE,type = "message")
+        on.exit(removeNotification(id2), add = TRUE)
+        
+        doses.dt <- LEMMA.forecasts:::GetDosesData(remote = TRUE)
+        
+        county.by.pop <- unique(county.dt[!is.na(population), .(county, population)]) #NA population if no hospitalizations
+        data.table::setorder(county.by.pop, -population)
+        county.set <- county.by.pop[, county]
+        
+        county.set <- setdiff(county.set, "Colusa")
+        
+        id3 <- showNotification("Running LEMMA forecasts", duration = NULL, closeButton = FALSE,type = "message")
+        on.exit(removeNotification(id3), add = TRUE)
+        
+        # run multiple counties in parallel
+        if (ncounty > 1) {
+            
+            out <- parallel::mclapply(
+                X = input$forecast_select_county, FUN = LEMMA.forecasts::RunOneCounty, 
+                county.dt = county.dt, doses.dt = doses.dt, remote = TRUE, writedir = writedir, 
+                mc.cores = parallel::detectCores() - 1
+            )
+            
+        } else {
+            
+            out <- LEMMA.forecasts::RunOneCounty(
+                county1 = input$forecast_select_county, county.dt = county.dt,doses.dt = doses.dt,remote = TRUE,writedir = writedir
+            )
+            
+        }
+        
+        forecast_run(TRUE)
+        shinyjs::enable("forecast_run")
+        shinybusy::remove_modal_spinner()
+    })
+    
     # --------------------------------------------------------------------------------
     # observers
     # --------------------------------------------------------------------------------
@@ -246,5 +244,50 @@ server <- function(input, output, session) {
             selected = character(0)
         )
     })
+    
+    # --------------------------------------------------------------------------------
+    # output
+    # --------------------------------------------------------------------------------
+    
+    # output: downloald excel output
+    output$forecast_download_pdf_out <- downloadHandler(
+        filename = function() {
+            return("forecast_pdf.zip")
+        },
+        content = function(file) {
+            
+            req(forecast_run())
+            req(forecast_dir())
+            
+            all_files <- list.files(paste0(forecast_dir(), "/Forecasts"))
+            pdf_files <- grep(pattern = ".pdf$",x = all_files)
+            utils::zip(
+                zipfile = file,files = paste0(forecast_dir(),"/Forecasts/",all_files[pdf_files]),flags = "-j"
+            )
+            
+            # openxlsx::write.xlsx(LEMMA_excel_out(), file = file)
+        },
+        contentType = "application/zip"
+    )
+    
+    # output: downloald pdf output
+    output$forecast_download_xlsx_out <- downloadHandler(
+        filename = function() {
+            return("forecast_xlsx.zip")
+        },
+        content = function(file) {
+            
+            req(forecast_run())
+            req(forecast_dir())
+            
+            all_files <- list.files(paste0(forecast_dir(), "/Forecasts"))
+            xlsx_files <- grep(pattern = ".xlsx$",x = all_files)
+            utils::zip(
+                zipfile = file,files = paste0(forecast_dir(),"/Forecasts/",all_files[xlsx_files]),flags = "-j"
+            )
+            
+        },
+        contentType = "application/zip"
+    )
     
 }
