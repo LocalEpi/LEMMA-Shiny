@@ -77,13 +77,19 @@ ui <- tagList(
             fluidRow(
                 column(
                     width = 6,
-                    shinyWidgets::multiInput(
-                        inputId = "forecast_select_county", label = "California Counties:",
-                        choices = CA_counties,
-                        selected = "Alameda", width = "100%"
+                    # shinyWidgets::multiInput(
+                    #     inputId = "forecast_select_county", label = "California Counties:",
+                    #     choices = CA_counties,
+                    #     selected = "Alameda", width = "100%"
+                    # ),
+                    selectInput(
+                        inputId = "forecast_select_county",
+                        label = "California Counties:",
+                        choices = as.list(CA_counties),
+                        selected = "Alameda"
                     ),
-                    actionButton(inputId = "forecast_select_county_selall",label = "Select all"),
-                    actionButton(inputId = "forecast_select_county_sel0",label = "Select none"),
+                    # actionButton(inputId = "forecast_select_county_selall",label = "Select all"),
+                    # actionButton(inputId = "forecast_select_county_sel0",label = "Select none"),
                     hr(),
                     actionButton("forecast_run", "Run Forecasts", class = "btn btn-primary btn-lg btn-block"),
                     hr(),
@@ -101,18 +107,31 @@ ui <- tagList(
         # --------------------------------------------------------------------------------
         tabPanel(
             "Scenarios",
-            includeMarkdown(path = "src/SEIRModel.md")
-        )
-        # # --------------------------------------------------------------------------------
-        # # navbar: Forecasting
-        # # --------------------------------------------------------------------------------
-        # navbarMenu("Forecasts", 
-        #            tabPanel("panel 4a", "four-a"),
-        #            tabPanel("panel 4b", "four-b"),
-        #            tabPanel("panel 4c", "four-c")
-        # )
-    )
-)
+            fluidRow(
+                column(
+                    width = 6,
+                    selectInput(
+                        inputId = "scenarios_select_county",
+                        label = "California Counties:",
+                        choices = as.list(CA_counties),
+                        selected = "Alameda"
+                    ),
+                    verbatimTextOutput("scenarios_select_county_out"),
+                    hr(),
+                    actionButton("scenarios_run", "Run Scenarios", class = "btn btn-primary btn-lg btn-block"),
+                    hr(),
+                    downloadButton("scenarios_download_pdf_out", "Download PDF output"),
+                    downloadButton("scenarios_download_xlsx_out", "Download Excel output")
+                ),
+                column(
+                    width = 6,
+                    includeMarkdown(path = "src/scenarios.md")
+                )
+            )
+        ) # end scenarios tabpanel
+
+    ) # end navbarpage 
+) # end ui definition
 
 
 # ui <- shiny::navbarPage(
