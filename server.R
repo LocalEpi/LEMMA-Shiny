@@ -264,6 +264,7 @@ server <- function(input, output, session) {
             
             all_files <- list.files(paste0(forecast_dir(), "/Forecasts"))
             pdf_files <- grep(pattern = ".pdf$",x = all_files)
+            req(length(pdf_files)>0)
             utils::zip(
                 zipfile = file,files = paste0(forecast_dir(),"/Forecasts/",all_files[pdf_files]),flags = "-j"
             )
@@ -285,6 +286,7 @@ server <- function(input, output, session) {
             
             all_files <- list.files(paste0(forecast_dir(), "/Forecasts"))
             xlsx_files <- grep(pattern = ".xlsx$",x = all_files)
+            req(length(xlsx_files)>0)
             utils::zip(
                 zipfile = file,files = paste0(forecast_dir(),"/Forecasts/",all_files[xlsx_files]),flags = "-j"
             )
@@ -310,7 +312,7 @@ server <- function(input, output, session) {
         
         ncounty <- length(input$forecast_select_county)
         writedir <- tempdir(check = TRUE)
-        forecast_dir(writedir)
+        scenarios_dir(writedir)
         if (length(list.dirs(writedir)) > 1) {
             unlink(
                 x = paste0(writedir,"/Scenarios"),recursive = TRUE
@@ -337,9 +339,16 @@ server <- function(input, output, session) {
         id3 <- showNotification("Running LEMMA scenarios", duration = NULL, closeButton = FALSE,type = "message")
         on.exit(removeNotification(id3), add = TRUE)
         
-        out <- LEMMA.forecasts::RunOneCounty_scen(
-            county1 = input$forecast_select_county, county.dt = county.dt,doses.dt = doses.dt,remote = TRUE,writedir = writedir
+        # out <- LEMMA.forecasts:::RunOn
+        out <- LEMMA.forecasts:::RunOneCounty_scen_input(
+            county1 = input$forecast_select_county, county.dt = county.dt,doses.dt = doses.dt,
+            k_uptake = ifelse(input$scenarios_uptake == 1L, "high", "low"),k_ukgrowth = input$scenarios_uk,k_brgrowth = input$scenarios_br,k_max_open = input$scenarios_reopen,
+            remote = TRUE,writedir = writedir
         )
+        
+        # out <- LEMMA.forecasts::RunOneCounty_scen(
+        #     county1 = input$forecast_select_county, county.dt = county.dt,doses.dt = doses.dt,remote = TRUE,writedir = writedir
+        # )
         
         scenarios_done(TRUE)
         shinyjs::enable("scenarios_run")
@@ -353,13 +362,14 @@ server <- function(input, output, session) {
         },
         content = function(file) {
             
-            req(forecast_done())
-            req(forecast_dir())
+            req(scenarios_done())
+            req(scenarios_dir())
             
-            all_files <- list.files(paste0(forecast_dir(), "/Scenarios"))
+            all_files <- list.files(paste0(scenarios_dir(), "/Scenarios"))
             pdf_files <- grep(pattern = ".pdf$",x = all_files)
+            req(length(pdf_files)>0)
             utils::zip(
-                zipfile = file,files = paste0(forecast_dir(),"/Scenarios/",all_files[pdf_files]),flags = "-j"
+                zipfile = file,files = paste0(scenarios_dir(),"/Scenarios/",all_files[pdf_files]),flags = "-j"
             )
             
             # openxlsx::write.xlsx(LEMMA_excel_out(), file = file)
@@ -374,13 +384,14 @@ server <- function(input, output, session) {
         },
         content = function(file) {
             
-            req(forecast_done())
-            req(forecast_dir())
+            req(scenarios_done())
+            req(scenarios_dir())
             
-            all_files <- list.files(paste0(forecast_dir(), "/Scenarios"))
+            all_files <- list.files(paste0(scenarios_dir(), "/Scenarios"))
             xlsx_files <- grep(pattern = ".xlsx$",x = all_files)
+            req(length(xlsx_files)>0)
             utils::zip(
-                zipfile = file,files = paste0(forecast_dir(),"/Scenarios/",all_files[xlsx_files]),flags = "-j"
+                zipfile = file,files = paste0(scenarios_dir(),"/Scenarios/",all_files[xlsx_files]),flags = "-j"
             )
             
         },

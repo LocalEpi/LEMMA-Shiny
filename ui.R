@@ -7,6 +7,7 @@
 #    http://shiny.rstudio.com/
 #
 
+
 # library(shiny)
 
 CA_counties <- c(
@@ -76,7 +77,8 @@ ui <- tagList(
             title = "Forecasts",
             fluidRow(
                 column(
-                    width = 6,
+                    
+                    width = 4,
                     # shinyWidgets::multiInput(
                     #     inputId = "forecast_select_county", label = "California Counties:",
                     #     choices = CA_counties,
@@ -97,7 +99,7 @@ ui <- tagList(
                     downloadButton("forecast_download_xlsx_out", "Download Excel output")
                 ),
                 column(
-                    width = 6,
+                    width = 8,
                     includeMarkdown(path = "src/forecasts.md")
                 )
             )
@@ -109,22 +111,32 @@ ui <- tagList(
             "Scenarios",
             fluidRow(
                 column(
-                    width = 6,
+                    width = 4,
                     selectInput(
                         inputId = "scenarios_select_county",
                         label = "California Counties:",
                         choices = as.list(CA_counties),
                         selected = "Alameda"
                     ),
-                    verbatimTextOutput("scenarios_select_county_out"),
                     hr(),
-                    actionButton("scenarios_run", "Run Scenarios", class = "btn btn-primary btn-lg btn-block"),
+                    selectInput("scenarios_uptake", "Vaccine uptake",choices = list(
+                        "High" = 1L,
+                        "Low" = 0L
+                    )),
+                    sliderInput("scenarios_uk", "UK variant growth rate",
+                                min = 1,max = 2,value = 1),
+                    sliderInput("scenarios_br", "BR variant growth rate",
+                                min = 1,max = 2,value = 1),
+                    sliderInput("scenarios_reopen", "Reopening (%)",
+                                min = 0.5,max = 1,value = 0.75),
+                    hr(),
+                    actionButton("scenarios_run", "Run Scenario", class = "btn btn-primary btn-lg btn-block"),
                     hr(),
                     downloadButton("scenarios_download_pdf_out", "Download PDF output"),
                     downloadButton("scenarios_download_xlsx_out", "Download Excel output")
                 ),
                 column(
-                    width = 6,
+                    width = 8,
                     includeMarkdown(path = "src/scenarios.md")
                 )
             )
