@@ -26,8 +26,14 @@ ui <- tagList(
     shinyFeedback::useShinyFeedback(),
     shiny::navbarPage(
         "LEMMA (Local Epidemic Modeling for Management and Action)",   
-        tabPanel("Model Structure", 
-                 includeMarkdown(path = "src/SEIRModel.md")
+        tabPanel("LEMMA Model", 
+                 fluidRow(
+                     column(
+                         9,
+                         includeMarkdown("src/SEIRModel.md")
+                     ),
+                     column(3,includeMarkdown("src/main_panel.md"))
+                 )
         ),
         # --------------------------------------------------------------------------------
         # navbar: Excel interface
