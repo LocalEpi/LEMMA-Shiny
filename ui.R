@@ -28,11 +28,12 @@ ui <- tagList(
         "LEMMA (Local Epidemic Modeling for Management and Action)",   
         tabPanel("LEMMA Model", 
                  fluidRow(
+                     column(2),
                      column(
-                         9,
+                         8,
                          includeMarkdown("src/SEIRModel.md")
                      ),
-                     column(3,includeMarkdown("src/main_panel.md"))
+                     column(2)
                  )
         ),
         # --------------------------------------------------------------------------------

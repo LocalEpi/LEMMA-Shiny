@@ -170,8 +170,9 @@ server <- function(input, output, session) {
     forecast_done <- reactiveVal(value = FALSE)
     forecast_dir <- reactiveVal(value = NULL)
     observeEvent(input$forecast_run, {
+        
+        remote <- FALSE
 
-        # browser()
         req(length(input$forecast_select_county) > 0)
         shinyjs::disable("forecast_run")
         shinybusy::show_modal_spinner(spin = "fading-circle",text = "Running LEMMA forecasts")
@@ -188,69 +189,25 @@ server <- function(input, output, session) {
         id1 <- showNotification("Downloading case data", duration = NULL, closeButton = FALSE,type = "message")
         on.exit(removeNotification(id1), add = TRUE)
 
-        county.dt <- LEMMA.forecasts:::GetCountyData(remote = TRUE)
+        county.dt <- LEMMA.forecasts:::GetCountyData(remote = remote)
         max.date <- LEMMA.forecasts:::Get1(county.dt[!is.na(hosp.conf), max(date), by = "county"]$V1)
 
         id2 <- showNotification("Downloading vaccination data", duration = NULL, closeButton = FALSE,type = "message")
         on.exit(removeNotification(id2), add = TRUE)
 
-        doses.dt <- LEMMA.forecasts:::GetDosesData(remote = TRUE)
-
-        county.by.pop <- unique(county.dt[!is.na(population), .(county, population)]) #NA population if no hospitalizations
-        data.table::setorder(county.by.pop, -population)
-        county.set <- county.by.pop[, county]
-
-        county.set <- setdiff(county.set, "Colusa")
+        doses.dt <- LEMMA.forecasts:::GetDosesData(remote = remote)
 
         id3 <- showNotification("Running LEMMA forecasts", duration = NULL, closeButton = FALSE,type = "message")
         on.exit(removeNotification(id3), add = TRUE)
 
-        # run multiple counties in parallel
-        if (ncounty > 1) {
-
-            out <- parallel::mclapply(
-                X = input$forecast_select_county, FUN = LEMMA.forecasts::RunOneCounty,
-                county.dt = county.dt, doses.dt = doses.dt, remote = TRUE, writedir = writedir,
-                mc.cores = parallel::detectCores() - 1
-            )
-
-        } else {
-
-            out <- LEMMA.forecasts::RunOneCounty(
-                county1 = input$forecast_select_county, county.dt = county.dt,doses.dt = doses.dt,remote = TRUE,writedir = writedir
-            )
-
-        }
+        out <- LEMMA.forecasts::RunOneCounty(
+            county1 = input$forecast_select_county, county.dt = county.dt,doses.dt = doses.dt,remote = remote,writedir = writedir
+        )
 
         forecast_done(TRUE)
         shinyjs::enable("forecast_run")
         shinybusy::remove_modal_spinner()
     })
-    
-    
-    # --------------------------------------------------------------------------------
-    # observers
-    # --------------------------------------------------------------------------------
-    
-    # observeEvent(input$forecast_select_county_selall, {
-    #     shinyWidgets::updateMultiInput(
-    #         session = session,
-    #         inputId = "forecast_select_county",
-    #         selected = CA_counties
-    #     )
-    # })
-    # 
-    # observeEvent(input$forecast_select_county_sel0, {
-    #     shinyWidgets::updateMultiInput(
-    #         session = session,
-    #         inputId = "forecast_select_county",
-    #         selected = character(0)
-    #     )
-    # })
-    
-    # --------------------------------------------------------------------------------
-    # output
-    # --------------------------------------------------------------------------------
     
     # output: downloald excel output
     output$forecast_download_pdf_out <- downloadHandler(
@@ -307,6 +264,8 @@ server <- function(input, output, session) {
     scenarios_dir <- reactiveVal(value = NULL)
     observeEvent(input$scenarios_run, {
         
+        remote <- FALSE
+
         shinyjs::disable("scenarios_run")
         shinybusy::show_modal_spinner(spin = "fading-circle",text = "Running LEMMA scenarios")
         
@@ -322,19 +281,13 @@ server <- function(input, output, session) {
         id1 <- showNotification("Downloading case data", duration = NULL, closeButton = FALSE,type = "message")
         on.exit(removeNotification(id1), add = TRUE)
         
-        county.dt <- LEMMA.forecasts:::GetCountyData(remote = TRUE)
+        county.dt <- LEMMA.forecasts:::GetCountyData(remote = remote)
         max.date <- LEMMA.forecasts:::Get1(county.dt[!is.na(hosp.conf), max(date), by = "county"]$V1)
         
         id2 <- showNotification("Downloading vaccination data", duration = NULL, closeButton = FALSE,type = "message")
         on.exit(removeNotification(id2), add = TRUE)
         
-        doses.dt <- LEMMA.forecasts:::GetDosesData(remote = TRUE)
-        
-        county.by.pop <- unique(county.dt[!is.na(population), .(county, population)]) #NA population if no hospitalizations
-        data.table::setorder(county.by.pop, -population)
-        county.set <- county.by.pop[, county]
-        
-        county.set <- setdiff(county.set, "Colusa")
+        doses.dt <- LEMMA.forecasts:::GetDosesData(remote = remote)
         
         id3 <- showNotification("Running LEMMA scenarios", duration = NULL, closeButton = FALSE,type = "message")
         on.exit(removeNotification(id3), add = TRUE)
@@ -343,12 +296,8 @@ server <- function(input, output, session) {
         out <- LEMMA.forecasts:::RunOneCounty_scen_input(
             county1 = input$forecast_select_county, county.dt = county.dt,doses.dt = doses.dt,
             k_uptake = ifelse(input$scenarios_uptake == 1L, "high", "low"),k_ukgrowth = input$scenarios_uk,k_brgrowth = input$scenarios_br,k_max_open = input$scenarios_reopen,
-            remote = TRUE,writedir = writedir
+            remote = remote,writedir = writedir
         )
-        
-        # out <- LEMMA.forecasts::RunOneCounty_scen(
-        #     county1 = input$forecast_select_county, county.dt = county.dt,doses.dt = doses.dt,remote = TRUE,writedir = writedir
-        # )
         
         scenarios_done(TRUE)
         shinyjs::enable("scenarios_run")
