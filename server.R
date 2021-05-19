@@ -259,12 +259,60 @@ server <- function(input, output, session) {
     # 
     # --------------------------------------------------------------------------------
     
+    # messy but no other way to get this to work.
+    # the reactive values are what we want: https://stackoverflow.com/questions/41706201/shiny-numericinput-does-not-respect-min-and-max-values
+    
+    # 1 young
+    scenarios_uptake_vals <- reactiveValues(val_young = 25, val_middle = 75, val_elder = 85, min = 0, max = 100)
+    
+    scenarios_young_uptake_value <- reactive({
+        if(!is.null(input$scenarios_young_uptake)){
+            if(input$scenarios_young_uptake < scenarios_uptake_vals$min) return(scenarios_uptake_vals$min)
+            if(input$scenarios_young_uptake > scenarios_uptake_vals$max) return(scenarios_uptake_vals$max)     
+            return(input$scenarios_young_uptake)
+        }else{
+            return(scenarios_uptake_vals$val_young)
+        }
+    })
+    
+    output$scenarios_young_uptake <- renderUI(numericInput("scenarios_young_uptake", "", min = scenarios_uptake_vals$min, 
+                                             max = scenarios_uptake_vals$max, value = scenarios_young_uptake_value()))
+    
+    # 2. middle
+    scenarios_middle_uptake_value <- reactive({
+        if(!is.null(input$scenarios_middle_uptake)){
+            if(input$scenarios_middle_uptake < scenarios_uptake_vals$min) return(scenarios_uptake_vals$min)
+            if(input$scenarios_middle_uptake > scenarios_uptake_vals$max) return(scenarios_uptake_vals$max)     
+            return(input$scenarios_middle_uptake)
+        }else{
+            return(scenarios_uptake_vals$val_middle)
+        }
+    })
+    
+    output$scenarios_middle_uptake <- renderUI(numericInput("scenarios_middle_uptake", "", min = scenarios_uptake_vals$min, 
+                                                           max = scenarios_uptake_vals$max, value = scenarios_middle_uptake_value()))
+    
+    # 3. elderly
+    scenarios_elder_uptake_value <- reactive({
+        if(!is.null(input$scenarios_elder_uptake)){
+            if(input$scenarios_elder_uptake < scenarios_uptake_vals$min) return(scenarios_uptake_vals$min)
+            if(input$scenarios_elder_uptake > scenarios_uptake_vals$max) return(scenarios_uptake_vals$max)     
+            return(input$scenarios_elder_uptake)
+        }else{
+            return(scenarios_uptake_vals$val_elder)
+        }
+    })
+    
+    output$scenarios_elder_uptake <- renderUI(numericInput("scenarios_elder_uptake", "", min = scenarios_uptake_vals$min, 
+                                                           max = scenarios_uptake_vals$max, value = scenarios_elder_uptake_value()))
+    
     # scenarios
     scenarios_done <- reactiveVal(value = FALSE)
     scenarios_dir <- reactiveVal(value = NULL)
     observeEvent(input$scenarios_run, {
         
         remote <- FALSE
+        # browser()
 
         shinyjs::disable("scenarios_run")
         shinybusy::show_modal_spinner(spin = "fading-circle",text = "Running LEMMA scenarios")
@@ -292,10 +340,13 @@ server <- function(input, output, session) {
         id3 <- showNotification("Running LEMMA scenarios", duration = NULL, closeButton = FALSE,type = "message")
         on.exit(removeNotification(id3), add = TRUE)
         
-        # out <- LEMMA.forecasts:::RunOn
+        # get user input vaccine data
+        vaxx_uptake <- c(scenarios_young_uptake_value(),scenarios_middle_uptake_value(),scenarios_elder_uptake_value())
+        
         out <- LEMMA.forecasts:::RunOneCounty_scen_input(
             county1 = input$forecast_select_county, county.dt = county.dt,doses.dt = doses.dt,
-            k_uptake = ifelse(input$scenarios_uptake == 1L, "high", "low"),k_ukgrowth = input$scenarios_uk,k_brgrowth = input$scenarios_br,k_max_open = input$scenarios_reopen,
+            k_uptake = "notused",k_ukgrowth = input$scenarios_uk,k_brgrowth = input$scenarios_br,k_max_open = input$scenarios_reopen,
+            vaccine_uptake = vaxx_uptake, vaccine_dosing_jj = input$scenarios_jj_day, vaccine_dosing_mrna = input$scenarios_mrna_day,
             remote = remote,writedir = writedir
         )
         

@@ -126,16 +126,27 @@ ui <- tagList(
                         selected = "Alameda"
                     ),
                     hr(),
-                    selectInput("scenarios_uptake", "Vaccine uptake",choices = list(
-                        "High" = 1L,
-                        "Low" = 0L
-                    )),
+                    # selectInput("scenarios_uptake", "Vaccine uptake",choices = list(
+                    #     "High" = 1L,
+                    #     "Low" = 0L
+                    # )),
+                    HTML("<b>Vaccine uptake % (ages 12-15)</b>",.noWS = "outside"),
+                    uiOutput("scenarios_young_uptake"),
+                    HTML("<b>Vaccine uptake % (ages 16-64)</b>",.noWS = "outside"),
+                    uiOutput("scenarios_middle_uptake"),
+                    HTML("<b>Vaccine uptake % (ages 65+)</b>",.noWS = "outside"),
+                    uiOutput("scenarios_elder_uptake"),
+                    # numericInput("scenarios_young_uptake", "Vaccine uptake (ages 12-15)",value = 0.25,min = 0,max = 1),
                     sliderInput("scenarios_uk", "UK variant growth rate",
                                 min = 1,max = 2,value = 1),
                     sliderInput("scenarios_br", "BR variant growth rate",
                                 min = 1,max = 2,value = 1),
                     sliderInput("scenarios_reopen", "Reopening (%)",
                                 min = 0.5,max = 1,value = 0.75),
+                    sliderInput("scenarios_mrna_day", "Daily increase in available doses (mRNA vaccines)",
+                                min = 0,max = 5e3,value = 0,step=1e2),
+                    sliderInput("scenarios_jj_day", "Daily increase in available doses (J&J vaccine)",
+                                min = 0,max = 5e3,value = 0,step=1e2),
                     hr(),
                     actionButton("scenarios_run", "Run Scenario", class = "btn btn-primary btn-lg btn-block"),
                     hr(),
@@ -151,71 +162,3 @@ ui <- tagList(
 
     ) # end navbarpage 
 ) # end ui definition
-
-
-# ui <- shiny::navbarPage(
-#     "LEMMA (Local Epidemic Modeling for Management and Action)",   
-#     tabPanel("Model Structure", 
-#              # includeMarkdown(path = normalizePath(path = paste0(path.package("LEMMA"),"/shiny/src/SEIRModel.md")))
-#              includeMarkdown(path = "src/SEIRModel.md")
-#     ),
-#     # --------------------------------------------------------------------------------
-#     # navbar: Excel interface
-#     # --------------------------------------------------------------------------------
-#     navbarMenu("Excel Interface", 
-#                # --------------------------------------------------------------------------------
-#                # tabPanel: data input
-#                # --------------------------------------------------------------------------------
-#                tabPanel(
-#                    title = "Data input", value = "xlsx-a",
-#                    fluidRow(
-#                        column(4,
-#                               fileInput("upload", "Upload a spreadsheet"),
-#                               textOutput("xlsx_check_txt"),
-#                               br(),
-#                               HTML(r"(<label class="control-label" id="upload-label" for="upload">Download template spreadsheet</label>)"),
-#                               br(),
-#                               downloadButton("download_template", "Download")
-#                        ),
-#                        column(8,
-#                               includeMarkdown(path = "src/excel_input.md")
-#                        )
-#                    )
-#                ),
-#                # --------------------------------------------------------------------------------
-#                # tabPanel: run LEMMA
-#                # --------------------------------------------------------------------------------
-#                tabPanel(
-#                    title = "Run LEMMA",value =  "xlsx-b",
-#                    fluidRow(
-#                        column(4,
-#                               actionButton("LEMMA_xlsx", "Run LEMMA", class = "btn btn-primary btn-lg btn-block"),
-#                               hr(),
-#                               downloadButton("download_pdf_out", "Download PDF output"),
-#                               downloadButton("download_xlsx_out", "Download Excel output")
-#                        ),
-#                        column(8,
-#                               includeMarkdown(path = "src/excel_output.md")
-#                        )
-#                    )
-#                )
-#     ),
-#     # --------------------------------------------------------------------------------
-#     # navbar: something 1
-#     # --------------------------------------------------------------------------------
-#     tabPanel("debugging", 
-#              fluidRow(
-#                  tableOutput("files")
-#              )
-#     ),
-#     # --------------------------------------------------------------------------------
-#     # navbar: something 2
-#     # --------------------------------------------------------------------------------
-#     navbarMenu("subpanels", 
-#                tabPanel("panel 4a", "four-a"),
-#                tabPanel("panel 4b", "four-b"),
-#                tabPanel("panel 4c", "four-c")
-#     )
-# )
-# 
-# shinyUI(ui)
