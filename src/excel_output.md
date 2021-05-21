@@ -1,15 +1,19 @@
 ## Output 
 Previous versions of LEMMA calculated crediblity intervals and reported quantiles. The current version only calculates a point estimate by maximizing the joint posterior. Future versions may include crediblity intervals again as an option.
 
+After clicking **Run Scenario** please wait a few minutes while the app downloads the most recent case data and runs forecasts with LEMMA. After the model has finished, PDF and Excel results can be downloaded by clicking the buttons **Download PDF output** and **Download Excel output**.
+
 ### PDF output
 The main output is provided in pdf format. Plots include short term and long term projections for number hospitalized, in the ICU, cumulative deaths, new hospital admissions, detected cases and seroprevalence (these are only shown for categories in which data was entered on the Data sheet). A plot of Re over time is shown up to 14 days before the last observed data. It is difficult to estimate Re beyond that date because it takes at least two weeks for changes in Re to be reflected in hospitalizations.
 
 <img src="figures/sf_output.png" width="60%">
 <img src="figures/sf_output_lt.png" width="60%">
 
+### Excel output
+
 Detailed outputs are provided in Excel format.  
 
-### Sheet 1: Projection 
+#### Sheet 1: Projection 
 The outputs on the "projection" sheet are all raw values, except seroprev and rt.
 
 - hosp: hospital census  
@@ -26,11 +30,11 @@ The outputs on the "projection" sheet are all raw values, except seroprev and rt
 - susceptibleUnvax: susceptible and unvaccinated  
 - vaccinated: number with vaccine immunity  
 
-### Sheet 2: posteriorParams
+#### Sheet 2: posteriorParams
 Posterior mode for each parameter (except interventions).
 
-### Sheet 3: posteriorIntervention
+#### Sheet 3: posteriorIntervention
 Posterior mode for each interventions parameter.
 
-### Sheet 4: all.inputs
+#### Sheet 4: all.inputs
 Text dump of all inputs

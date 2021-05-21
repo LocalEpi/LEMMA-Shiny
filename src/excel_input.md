@@ -1,5 +1,7 @@
 ## Input
-While all inputs can be given in R, the easiest way to get started with LEMMA is to use an Excel file input. The provided Excel spreadsheet provides a template and example of the inputs needed to run LEMMA. These are inputted in 10 sheets. 
+While all inputs can be given in R, the easiest way to get started with LEMMA is to use an Excel file input. The provided Excel spreadsheet provides a template and example of the inputs needed to run LEMMA. These are inputted in 10 sheets.
+
+A template spreadsheet with the correct format can be downloaded by clicking **Download** under **Download template spreadsheet**. After making desired modifications, it can be uploaded to the server by using the **Browse..** button under **Upload a spreadsheet** to find the file on your computer. After the file is uploaded, please navigate to the tab **Run LEMMA** under the tab **Excel Interface**.
 
 ### Sheet 1: Parameters with Distributions
 Briefly, LEMMA requires parameters related to the epidemic modeling (e.g., basic reproductive number, duration of infectiousness, percent of infected persons who are hospitalized). LEMMA also allows the user to specify the timing and impact of public health interventions, such as school closures and shelter-in-place orders. Interventions may occur before the current date to reflect such public health interventions. Interventions may also occur after the current date and can be used to simulate epidemic if measures are implemented or lifted at a future date. Explanations for specific parameters are provided below. Users can input a mean and standard deviation for each parameter. Each parameter will be drawn from a normal distribution. 

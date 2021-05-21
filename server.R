@@ -343,9 +343,12 @@ server <- function(input, output, session) {
         # get user input vaccine data
         vaxx_uptake <- c(scenarios_young_uptake_value(),scenarios_middle_uptake_value(),scenarios_elder_uptake_value())
         
+        uk_growth <- input$scenarios_uk + 1
+        br_growth <- input$scenarios_br + 1
+        
         out <- LEMMA.forecasts:::RunOneCounty_scen_input(
             county1 = input$forecast_select_county, county.dt = county.dt,doses.dt = doses.dt,
-            k_uptake = "notused",k_ukgrowth = input$scenarios_uk,k_brgrowth = input$scenarios_br,k_max_open = input$scenarios_reopen,
+            k_uptake = "notused",k_ukgrowth = uk_growth,k_brgrowth = br_growth,k_max_open = input$scenarios_reopen,
             vaccine_uptake = vaxx_uptake, vaccine_dosing_jj = input$scenarios_jj_day, vaccine_dosing_mrna = input$scenarios_mrna_day,
             remote = remote,writedir = writedir
         )
