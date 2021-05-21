@@ -2,7 +2,7 @@
 
 Select a California county and run a potential scenario.
 
-  * **Vaccine** uptake: select vaccine uptake proportion (vaccination will continue in model until this uptake percentage is reached) for each age group. Values outside of [0,100] will be clipped to those min/max values.
+  * **Vaccine uptake**: select vaccine uptake proportion (vaccination will continue in model until this uptake percentage is reached) for each age group. Values outside of [0,100] will be clipped to those min/max values.
   * **UK variant growth**: select the growth rate of the B.1.1.7 variant of SARS-CoV-2 as a percentage; 0 corresponds to no growth relative to other variants (wild type), 1 corresponds to a growth rate equal to twice the wild type variant.
   * **BR variant growth**: select the growth rate of the P.1 variant of SARS-CoV-2, also specified as a percentage.
   * **Reopening**: the proportion of pre-pandemic activity that will be returned to after full reopening
@@ -20,7 +20,7 @@ PDF output from running scenarios is slightly different from Forecasts or the ba
 The PDF output contains 9 plots:
 
   1. Effective contact rate relative to initial effective contact rate: this plot shows the estimated changes in effective contact rate, due to social distancing measures and other behavioral changes in orange. The blue section gives the projected changes in effective contact rate used for the scenario (controlled by the **Reopening** slider).
-  2. Actual and Projected Vaccine Doses: this shows distributed vaccine doses and projected changes used for the scenario (controlled by the **Daily increase in available doses (mRNA/J&J vaccine)** sliders).
+  2. Actual and Projected Vaccine Doses: this shows distributed vaccine doses and projected changes used for the scenario (affected by the **Daily increase in available doses (mRNA/J&J vaccine)** sliders and **Vaccine uptake** proportions).
   3. Relative fraction of COVID-19 cases belonging to each variant (controlled by **UK/BR variant growth** sliders).
   4. Long Term Hospitalization Projection
   4. Long Term ICU Projection
