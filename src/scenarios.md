@@ -1,6 +1,6 @@
 # Scenarios
 
-Select a California county and run a potential scenario.
+Select a California county and run a potential scenario. The model is fit in the same manner as described on the "Forecasts" tab, and then is sampled to project a possible scenario. The scenario parameters under user control are listed below.
 
   * **Vaccine uptake**: select vaccine uptake proportion (vaccination will continue in model until this uptake percentage is reached) for each age group. Values outside of [0,100] will be clipped to those min/max values.
   * **UK variant growth**: select the growth rate of the B.1.1.7 variant of SARS-CoV-2 as a percentage; 0 corresponds to no growth relative to other variants (wild type), 1 corresponds to a growth rate equal to twice the wild type variant.
