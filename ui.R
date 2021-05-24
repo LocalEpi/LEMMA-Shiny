@@ -154,7 +154,22 @@ ui <- tagList(
                     includeMarkdown(path = "src/scenarios.md")
                 )
             )
-        ) # end scenarios tabpanel
-
+        ), # end scenarios tabpanel
+        
+        # --------------------------------------------------------------------------------
+        # tabPanel: Information
+        # --------------------------------------------------------------------------------
+        tabPanel(
+            "Information",
+            fluidRow(
+                column(2),
+                column(
+                    8,
+                    includeMarkdown("src/information.md")
+                ),
+                column(2)
+            )
+        )
+        
     ) # end navbarpage 
 ) # end ui definition
