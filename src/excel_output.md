@@ -1,7 +1,8 @@
+## Using LEMMA Excel Interface
+After clicking **Run Scenario** please wait a few minutes while the app downloads the most recent case data and runs forecasts with LEMMA. After the model has finished, PDF and Excel results can be downloaded by clicking the buttons **Download PDF output** and **Download Excel output**. Please ensure you have uploaded a valid set of parameter using **Upload a spreadsheet** on the tab **Data Input** under **Excel Interface**.
+
 ## Output 
 Previous versions of LEMMA calculated crediblity intervals and reported quantiles. The current version only calculates a point estimate by maximizing the joint posterior. Future versions may include crediblity intervals again as an option.
-
-After clicking **Run Scenario** please wait a few minutes while the app downloads the most recent case data and runs forecasts with LEMMA. After the model has finished, PDF and Excel results can be downloaded by clicking the buttons **Download PDF output** and **Download Excel output**.
 
 ### PDF output
 The main output is provided in pdf format. Plots include short term and long term projections for number hospitalized, in the ICU, cumulative deaths, new hospital admissions, detected cases and seroprevalence (these are only shown for categories in which data was entered on the Data sheet). A plot of Re over time is shown up to 14 days before the last observed data. It is difficult to estimate Re beyond that date because it takes at least two weeks for changes in Re to be reflected in hospitalizations.

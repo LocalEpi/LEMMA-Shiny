@@ -31,7 +31,7 @@ ui <- tagList(
                      column(2),
                      column(
                          8,
-                         includeMarkdown("src/SEIRModel.md")
+                         includeMarkdown("src/main_page.md")
                      ),
                      column(2)
                  )

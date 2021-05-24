@@ -11,7 +11,7 @@ To produce forecasts LEMMA's SEIR model is fit to time series data using Stan. A
   * Confirmed cumulative cases
   * Seroprevalence
 
-For additional functionality which is not practical to run from a web-based interface, please consider looking at [LEMMA-Forecasts](file:///home/slwu89/git/LEMMA-Forecasts/LEMMA.forecasts/docs/index.html), an R package which this Shiny app depends upon and has additional functions, including generation of statewide overviews and maps of county-wise estimated effective reproductive number.
+For additional functionality which is not practical to run from a web-based interface, please consider looking at [LEMMA-Forecasts](https://localepi.github.io/LEMMA-Forecasts/), an R package which this Shiny app depends upon and has additional functions, including generation of statewide overviews and maps of county-wise estimated effective reproductive number.
 
 ## Outputs
 

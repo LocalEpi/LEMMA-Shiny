@@ -11,7 +11,7 @@ Select a California county and run a potential scenario. The model is fit in the
   
 After selecting the settings, the scenario can be run. After clicking **Run Scenario** please wait a few minutes while the app downloads the most recent case data and runs scenarios with LEMMA. After the model has finished, PDF and Excel results can be downloaded by clicking the buttons **Download PDF output** and **Download Excel output**.
 
-For additional functionality which is not practical to run from a web-based interface, please consider looking at [LEMMA-Forecasts](file:///home/slwu89/git/LEMMA-Forecasts/LEMMA.forecasts/docs/index.html), an R package which this Shiny app depends upon and has additional functions, including generation of statewide overviews and maps of county-wise estimated effective reproductive number.
+For additional functionality which is not practical to run from a web-based interface, please consider looking at [LEMMA-Forecasts](https://localepi.github.io/LEMMA-Forecasts/), an R package which this Shiny app depends upon and has additional functions, including generation of statewide overviews and maps of county-wise estimated effective reproductive number.
 
 ### PDF output
 

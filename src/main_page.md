@@ -9,6 +9,15 @@ Forecasts and scenarios for California counties:
   * [County Forecasts](https://github.com/LocalEpi/LEMMA-Forecasts/tree/master/Forecasts)
   * [County Scenarios](https://github.com/LocalEpi/LEMMA-Forecasts/tree/master/Scenarios)
 
+# Shiny navigation
+
+This LEMMA app can be navigated using the tabs at the top panel.
+
+  * **Excel Interface**: provides a method to download and upload an Excel spreadsheet to specify all LEMMA model parameters on drop-down tab **Data Input**; after this is done LEMMA can be run and PDF/Excel outputs downloaded from **Run LEMMA**. This allows the highest level of user control over input parameters.
+  * **Forecasts**: run a forecast for a specific California county, where LEMMA is first fit to observed data then forward simulated under the assumption of no changes in parameter or interventions.
+  * **Scenarios**: run a potential scenario for a specific California county; LEMMA is first fit to observed data then forward simulated under user selected alternative parameter values.
+  * **Information**: provides more information regarding the LEMMA model and parameters. 
+
 # Compartmental model used in LEMMA
 
 The LEMMA model is based on the [Santa Cruz County COVID-19 Model](https://github.com/jpmattern/seir-covid19) and is a discrete time SEIR model. The model is fit to data using [Stan](https://mc-stan.org/).
