@@ -356,6 +356,7 @@ server <- function(input, output, session) {
             county1 = input$forecast_select_county, county.dt = county.dt,doses.dt = doses.dt,
             k_uptake = "notused",k_ukgrowth = uk_growth,k_brgrowth = br_growth,k_max_open = input$scenarios_reopen,
             vaccine_uptake = vaxx_uptake, vaccine_dosing_jj = input$scenarios_jj_day, vaccine_dosing_mrna = input$scenarios_mrna_day,
+            vaccine_dosing_start_today = TRUE,
             remote = remote,writedir = writedir
         )
         
