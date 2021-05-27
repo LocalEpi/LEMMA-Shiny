@@ -52,25 +52,21 @@ server <- function(input, output, session) {
     #   Excel Interface tab
     # 
     # --------------------------------------------------------------------------------
-    
+    debug(LEMMA:::GetDoses)
     # inputs
     LEMMA_inputs <- reactiveVal()
     observeEvent(input$upload, {
-        # req(input$upload)
         
         ext <- tools::file_ext(input$upload$name)
         shinyFeedback::feedback(inputId = "upload",show = ext != "xlsx",text = "Invalid file; Please upload a .xlsx file",color = "red")
         if (ext != "xlsx") {
-            # validate("Invalid file; Please upload a .xlsx file")
             req(FALSE)
         }
-        # shinyFeedback::feedback(inputId = "upload",show = {ext != "xlsx"},text = "Invalid file; Please upload a .xlsx file",color = "red")
 
         sheets <- readxl::excel_sheets(path = normalizePath(input$upload$datapath))
         shinyFeedback::feedback(inputId = "upload",show = !identical(expected_sheets, sheets),text = "Invalid file; File needs 10 named sheets",color = "red")
         if (!identical(expected_sheets, sheets)) {
             req(FALSE)
-            # validate( cat("Invalid file; File needs 10 named sheets: ",paste0(expected_sheets,collapse = ", ")))
         }
         
         id1 <- showNotification("Reading data", duration = NULL, closeButton = FALSE,type = "message")
@@ -352,11 +348,17 @@ server <- function(input, output, session) {
         uk_growth <- input$scenarios_uk + 1
         br_growth <- input$scenarios_br + 1
         
+        vaccine_dosing <- list(
+            vaccine_dosing_jj = input$scenarios_jj_day,
+            vaccine_dosing_mrna = input$scenarios_mrna_day,
+            vaccine_dosing_jj_max = input$scenarios_jj_day_max,
+            vaccine_dosing_mrna_max = input$scenarios_mrna_day_max
+        )
+        
         out <- LEMMA.forecasts:::RunOneCounty_scen_input(
             county1 = input$forecast_select_county, county.dt = county.dt,doses.dt = doses.dt,
             k_uptake = "notused",k_ukgrowth = uk_growth,k_brgrowth = br_growth,k_max_open = input$scenarios_reopen,
-            vaccine_uptake = vaxx_uptake, vaccine_dosing_jj = input$scenarios_jj_day, vaccine_dosing_mrna = input$scenarios_mrna_day,
-            vaccine_dosing_start_today = TRUE,
+            vaccine_uptake = vaxx_uptake, vaccine_dosing = vaccine_dosing,
             remote = remote,writedir = writedir
         )
         
