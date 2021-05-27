@@ -52,7 +52,7 @@ server <- function(input, output, session) {
     #   Excel Interface tab
     # 
     # --------------------------------------------------------------------------------
-    debug(LEMMA:::GetDoses)
+
     # inputs
     LEMMA_inputs <- reactiveVal()
     observeEvent(input$upload, {
@@ -348,12 +348,16 @@ server <- function(input, output, session) {
         uk_growth <- input$scenarios_uk + 1
         br_growth <- input$scenarios_br + 1
         
-        vaccine_dosing <- list(
-            vaccine_dosing_jj = input$scenarios_jj_day,
-            vaccine_dosing_mrna = input$scenarios_mrna_day,
-            vaccine_dosing_jj_max = input$scenarios_jj_day_max,
-            vaccine_dosing_mrna_max = input$scenarios_mrna_day_max
-        )
+        if (input$scenarios_show_dosing) {
+            vaccine_dosing <- list(
+                vaccine_dosing_jj = input$scenarios_jj_day,
+                vaccine_dosing_mrna = input$scenarios_mrna_day,
+                vaccine_dosing_jj_max = input$scenarios_jj_day_max,
+                vaccine_dosing_mrna_max = input$scenarios_mrna_day_max
+            )
+        } else {
+            vaccine_dosing <- NULL
+        }
         
         out <- LEMMA.forecasts:::RunOneCounty_scen_input(
             county1 = input$forecast_select_county, county.dt = county.dt,doses.dt = doses.dt,

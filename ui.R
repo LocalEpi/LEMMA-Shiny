@@ -139,17 +139,20 @@ ui <- tagList(
                     sliderInput("scenarios_reopen", "Reopening (%)",
                                 min = 0.5,max = 1,value = 0.75),
                     radioButtons(
-                        "scenarios_show_dosing","Select available doses",
-                        choices = list("Yes" = TRUE, "No" = FALSE)
+                        "scenarios_show_dosing","Detailed vaccine availability",
+                        choices = list("No" = FALSE, "Yes" = TRUE)
                     ),
-                    sliderInput("scenarios_mrna_day", "Daily change in available doses (mRNA vaccines)",
-                                min = -5e3,max = 5e3,value = 0,step=1e2),
-                    sliderInput("scenarios_jj_day", "Daily change in available doses (J&J vaccine)",
-                                min = -5e3,max = 5e3,value = 0,step=1e2),
-                    sliderInput("scenarios_mrna_day_max", "Increase over baseline for maximum daily doses (mRNA vaccines)",
-                                min = 0,max = 1e4,value = 0,step=1e2),
-                    sliderInput("scenarios_jj_day_max", "Increase over baseline for maximum daily doses (J&J vaccine)",
-                                min = 0,max = 1e4,value = 0,step=1e2),
+                    conditionalPanel(
+                        condition = "input.scenarios_show_dosing == 'TRUE'", 
+                        sliderInput("scenarios_mrna_day", "Daily change in available doses (mRNA vaccines)",
+                                    min = -5e3,max = 5e3,value = 0,step=1e2),
+                        sliderInput("scenarios_jj_day", "Daily change in available doses (J&J vaccine)",
+                                    min = -5e3,max = 5e3,value = 0,step=1e2),
+                        sliderInput("scenarios_mrna_day_max", "Increase over baseline for maximum daily doses (mRNA vaccines)",
+                                    min = 0,max = 1e4,value = 0,step=1e2),
+                        sliderInput("scenarios_jj_day_max", "Increase over baseline for maximum daily doses (J&J vaccine)",
+                                    min = 0,max = 1e4,value = 0,step=1e2)  
+                    ),
                     hr(),
                     actionButton("scenarios_run", "Run Scenario", class = "btn btn-primary btn-lg btn-block"),
                     hr(),

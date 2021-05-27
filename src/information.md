@@ -4,9 +4,7 @@ LEMMA provides a platform to fit a transmission model to COVID-19 time series da
 
 The LEMMA model is a discrete time SEIR (Susceptible-Exposed-Infectious-Recovered) compartmental model. The model dynamics are deterministic but parameters (R<sub>0</sub>, duration of latent period, etc) are given prior probability distributions. The model is not age-structured; age-based effects such as vaccine uptake among certain age groups is modeled by taking a weighted average of the effect using the relative sizes of each age group based on county census data to weight appropriately. The model is fit to data and posterior distributions for parameters estimated with [Stan](https://mc-stan.org/).
 
-The model contains 9 compartments to divide COVID-19 cases into the asymptomatic, mild, and moderate to severe illness, which better informs hospitalization and death projections. The model is modified from the [Santa Cruz County COVID-19 Model](https://github.com/jpmattern/seir-covid19) (diagram below) to include vaccination, so that each compartment additionally stratifies into vaccinated and unvaccinated status.
-
-<img src="figures/seir_diagram.png" width="50%">
+The model contains 9 compartments to divide COVID-19 cases into the asymptomatic, mild, and moderate to severe illness, which better informs hospitalization and death projections. Each compartment additionally is stratified by vaccinated and unvaccinated status.
 
 ## LEMMA Model Parameters
 

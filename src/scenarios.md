@@ -6,8 +6,11 @@ Select a California county and run a potential scenario. The model is fit in the
   * **UK variant growth**: select the growth rate of the B.1.1.7 variant of SARS-CoV-2 as a percentage; 0 corresponds to no growth relative to other variants (wild type), 1 corresponds to a growth rate equal to twice the wild type variant.
   * **BR variant growth**: select the growth rate of the P.1 variant of SARS-CoV-2, also specified as a percentage.
   * **Reopening**: the proportion of pre-pandemic activity that will be returned to after full reopening
-  * **Daily increase in available doses (mRNA vaccines)**: the daily rate of increase in available mRNA (Pfizer & Moderna) vaccine doses. If set to 0, available doses remain at baseline.
-  * **Daily increase in available doses (J&J vaccine)**: the daily rate of increase in available Johnson & Johnson vaccine doses. If set to 0, available doses remain at baseline.
+  * **Detailed vaccine availability**: if "no", daily vaccine availability is set to the "baseline" amount, the number of vaccines available the last day for which data exists. Set this to "yes" to get access to more options on daily vaccine availability, given below:
+    * **Daily increase in available doses (mRNA vaccines)**: the daily rate of increase (decrease) in available mRNA (Pfizer & Moderna) vaccine doses.
+    * **Daily increase in available doses (J&J vaccine)**: the daily rate of increase (decrease) in available Johnson & Johnson vaccine doses.
+    * **Increase over baseline for maximum daily doses (mRNA vaccines)**: by default, maximum daily doses are set to the amount available the last day for which data exists, for increasing daily availability, the maximum daily doses should be increased over baseline by this amount.
+    * **Increase over baseline for maximum daily doses (J&J vaccines)**: the same option, but for J&J vaccines.
 
 ### Run Scenario  
 
