@@ -20,7 +20,7 @@ This LEMMA app can be navigated using the tabs at the top panel.
 
 # Compartmental model used in LEMMA
 
-The LEMMA model is based on the [Santa Cruz County COVID-19 Model](https://github.com/jpmattern/seir-covid19) and is a discrete time SEIR model. The model is fit to data using [Stan](https://mc-stan.org/).
+The LEMMA model is a discrete time SEIR model. The model is fit to data using [Stan](https://mc-stan.org/).
 
 ![compartment](figures/SEIRModel.png "SEIR compartmental model")
 
