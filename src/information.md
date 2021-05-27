@@ -6,6 +6,8 @@ The LEMMA model is a discrete time SEIR (Susceptible-Exposed-Infectious-Recovere
 
 The model contains 9 compartments to divide COVID-19 cases into the asymptomatic, mild, and moderate to severe illness, which better informs hospitalization and death projections. Each compartment additionally is stratified by vaccinated and unvaccinated status.
 
+![compartment](figures/SEIRModelData.png "SEIR compartmental model")
+
 ## LEMMA Model Parameters
 
 The LEMMA model itself has 12 parameters whose prior probability distributions can be controlled by the user (mean and standard deviation can be specified, but the distribution is assumed Normal and all are independent). These parameters are estimated during model fitting and the MAP (maximum a posteriori probability) value is used for forecasting and simulation of scenarios.
