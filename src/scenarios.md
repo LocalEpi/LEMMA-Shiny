@@ -8,8 +8,10 @@ Select a California county and run a potential scenario. The model is fit in the
   * **Reopening**: the proportion of pre-pandemic activity that will be returned to after full reopening
   * **Daily increase in available doses (mRNA vaccines)**: the daily rate of increase in available mRNA (Pfizer & Moderna) vaccine doses. If set to 0, available doses remain at baseline.
   * **Daily increase in available doses (J&J vaccine)**: the daily rate of increase in available Johnson & Johnson vaccine doses. If set to 0, available doses remain at baseline.
-  
-After selecting the settings, the scenario can be run. After clicking **Run Scenario** please wait a few minutes while the app downloads the most recent case data and runs scenarios with LEMMA. After the model has finished, PDF and Excel results can be downloaded by clicking the buttons **Download PDF output** and **Download Excel output**.
+
+### Run Scenario  
+
+After selecting the settings, the scenario can be run. Please make sure valid options have been selected for the scenario, otherwise nothing will happen. After clicking **Run Scenario** please wait a few minutes while the app downloads the most recent case data and runs scenarios with LEMMA. After the model has finished, PDF and Excel results can be downloaded by clicking the buttons **Download PDF output** and **Download Excel output**.
 
 For additional functionality which is not practical to run from a web-based interface, please consider looking at [LEMMA-Forecasts](https://localepi.github.io/LEMMA-Forecasts/), an R package which this Shiny app depends upon and has additional functions, including generation of statewide overviews and maps of county-wise estimated effective reproductive number.
 

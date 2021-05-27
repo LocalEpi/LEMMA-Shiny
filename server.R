@@ -267,6 +267,7 @@ server <- function(input, output, session) {
     
     scenarios_young_uptake_value <- reactive({
         if(!is.null(input$scenarios_young_uptake)){
+            if (is.na(input$scenarios_young_uptake)) {return(NULL)}
             if(input$scenarios_young_uptake < scenarios_uptake_vals$min) return(scenarios_uptake_vals$min)
             if(input$scenarios_young_uptake > scenarios_uptake_vals$max) return(scenarios_uptake_vals$max)     
             return(input$scenarios_young_uptake)
@@ -280,11 +281,12 @@ server <- function(input, output, session) {
     
     # 2. middle
     scenarios_middle_uptake_value <- reactive({
-        if(!is.null(input$scenarios_middle_uptake)){
+        if (!is.null(input$scenarios_middle_uptake)) {
+            if (is.na(input$scenarios_middle_uptake)) {return(NULL)}
             if(input$scenarios_middle_uptake < scenarios_uptake_vals$min) return(scenarios_uptake_vals$min)
             if(input$scenarios_middle_uptake > scenarios_uptake_vals$max) return(scenarios_uptake_vals$max)     
             return(input$scenarios_middle_uptake)
-        }else{
+        } else {
             return(scenarios_uptake_vals$val_middle)
         }
     })
@@ -295,6 +297,7 @@ server <- function(input, output, session) {
     # 3. elderly
     scenarios_elder_uptake_value <- reactive({
         if(!is.null(input$scenarios_elder_uptake)){
+            if (is.na(input$scenarios_elder_uptake)) {return(NULL)}
             if(input$scenarios_elder_uptake < scenarios_uptake_vals$min) return(scenarios_uptake_vals$min)
             if(input$scenarios_elder_uptake > scenarios_uptake_vals$max) return(scenarios_uptake_vals$max)     
             return(input$scenarios_elder_uptake)
@@ -312,7 +315,10 @@ server <- function(input, output, session) {
     observeEvent(input$scenarios_run, {
         
         remote <- FALSE
-        # browser()
+
+        req(is.finite(scenarios_young_uptake_value()))
+        req(is.finite(scenarios_middle_uptake_value()))
+        req(is.finite(scenarios_elder_uptake_value()))
 
         shinyjs::disable("scenarios_run")
         shinybusy::show_modal_spinner(spin = "fading-circle",text = "Running LEMMA scenarios")
