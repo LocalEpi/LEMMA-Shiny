@@ -347,6 +347,7 @@ server <- function(input, output, session) {
         
         uk_growth <- input$scenarios_uk + 1
         br_growth <- input$scenarios_br + 1
+        in_growth <- input$scenarios_in + 1
         
         if (input$scenarios_show_dosing) {
             vaccine_dosing <- list(
@@ -361,7 +362,8 @@ server <- function(input, output, session) {
         
         out <- LEMMA.forecasts:::RunOneCounty_scen_input(
             county1 = input$forecast_select_county, county.dt = county.dt,doses.dt = doses.dt,
-            k_uptake = "notused",k_ukgrowth = uk_growth,k_brgrowth = br_growth,k_max_open = input$scenarios_reopen,
+            k_uptake = "notused",k_ukgrowth = uk_growth,k_brgrowth = br_growth, k_ingrowth = in_growth,
+            k_max_open = input$scenarios_reopen,
             vaccine_uptake = vaxx_uptake, vaccine_dosing = vaccine_dosing,
             remote = remote,writedir = writedir
         )

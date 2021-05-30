@@ -5,6 +5,7 @@ Select a California county and run a potential scenario. The model is fit in the
   * **Vaccine uptake**: select vaccine uptake proportion (vaccination will continue in model until this uptake percentage is reached) for each age group. Values outside of [0,100] will be clipped to those min/max values.
   * **UK variant growth**: select the growth rate of the B.1.1.7 variant of SARS-CoV-2 as a percentage; 0 corresponds to no growth relative to other variants (wild type), 1 corresponds to a growth rate equal to twice the wild type variant.
   * **BR variant growth**: select the growth rate of the P.1 variant of SARS-CoV-2, also specified as a percentage.
+  * **IN variant growth**: select the growth rate of the B.1.617.2 variant of SARS-CoV-2, also specified as a percentage.
   * **Reopening**: the proportion of pre-pandemic activity that will be returned to after full reopening
   * **Detailed vaccine availability**: if "no", daily vaccine availability is set to the "baseline" amount, and actual doses will be given until the targets specified by uptake percentages are hit, at the rate from the last day of data. Set this to "yes" to get access to more options on daily vaccine availability, given below:
     * **Daily increase in available doses (mRNA vaccines)**: the daily rate of increase (decrease) in available mRNA (Pfizer & Moderna) vaccine doses.

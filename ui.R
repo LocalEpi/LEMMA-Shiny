@@ -136,6 +136,8 @@ ui <- tagList(
                                 min = 0,max = 1,value = 0),
                     sliderInput("scenarios_br", "BR variant growth rate (%)",
                                 min = 0,max = 1,value = 0),
+                    sliderInput("scenarios_in", "IN variant growth rate (%)",
+                                min = 0,max = 1,value = 0),
                     sliderInput("scenarios_reopen", "Reopening (%)",
                                 min = 0.5,max = 1,value = 0.75),
                     radioButtons(
