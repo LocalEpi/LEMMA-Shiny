@@ -1,0 +1,13 @@
+name: LEMMA-Shiny
+title: LEMMA-Shiny
+username:
+account: localepi
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4259290
+bundleId: 4715707
+url: https://localepi.shinyapps.io/LEMMA-Shiny/
+when: 1623692572.15043
+lastSyncTime: 1623692572.15044
+asMultiple: FALSE
+asStatic: FALSE
