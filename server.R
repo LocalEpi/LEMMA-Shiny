@@ -46,17 +46,17 @@ CA_counties <- c(
 # )
 
 server <- function(input, output, session) {
-    
+
     # --------------------------------------------------------------------------------
     #
     #   Excel Interface tab
-    # 
+    #
     # --------------------------------------------------------------------------------
 
     # inputs
     LEMMA_inputs <- reactiveVal()
     observeEvent(input$upload, {
-        
+
         ext <- tools::file_ext(input$upload$name)
         shinyFeedback::feedback(inputId = "upload",show = ext != "xlsx",text = "Invalid file; Please upload a .xlsx file",color = "red")
         if (ext != "xlsx") {
@@ -68,17 +68,17 @@ server <- function(input, output, session) {
         if (!identical(expected_sheets, sheets)) {
             req(FALSE)
         }
-        
+
         id1 <- showNotification("Reading data", duration = NULL, closeButton = FALSE,type = "message")
         on.exit(removeNotification(id1), add = TRUE)
         input <- LEMMA:::ReadInputs(path = input$upload$datapath)
-        
+
         id2 <- showNotification("Generating LEMMA parameters", duration = NULL, closeButton = FALSE,type = "message")
         on.exit(removeNotification(id2), add = TRUE)
-        
+
         LEMMA_inputs(LEMMA:::ProcessSheets(input))
     })
-    
+
     # reactive: LEMMA run from excel upload
     LEMMA_excel_run <- reactiveVal()
     observeEvent(input$LEMMA_xlsx, {
@@ -91,7 +91,7 @@ server <- function(input, output, session) {
         shinyjs::enable("LEMMA_xlsx")
         shinybusy::remove_modal_spinner()
     })
-    
+
     # reactive: LEMMA excel output
     LEMMA_excel_out <- reactive({
         req(LEMMA_excel_run())
@@ -99,17 +99,17 @@ server <- function(input, output, session) {
         on.exit(removeNotification(id), add = TRUE)
         LEMMA:::GetExcelOutputData(LEMMA_excel_run()$projection, LEMMA_excel_run()$fit.to.data, LEMMA_excel_run()$inputs)
     })
-    
+
     # --------------------------------------------------------------------------------
     # output elements
     # --------------------------------------------------------------------------------
-    
+
     # output: checker to let users know excel uploaded
     output$xlsx_check_txt <- renderText({
         req(LEMMA_inputs())
         paste0("File successfully uploaded, size ",signif(input$upload$size/1e3,digits = 6),"Kb")
     })
-    
+
     # output: download the sample template
     output$download_template <- downloadHandler(
         filename = function() {
@@ -120,7 +120,7 @@ server <- function(input, output, session) {
         },
         contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
-    
+
     # output: downloald excel output
     output$download_xlsx_out <- downloadHandler(
         filename = function() {
@@ -132,7 +132,7 @@ server <- function(input, output, session) {
         },
         contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
-    
+
     # output: downloald pdf output
     output$download_pdf_out <- downloadHandler(
         filename = function() {
@@ -142,31 +142,31 @@ server <- function(input, output, session) {
             req(LEMMA_excel_run())
             id <- showNotification("Creating .pdf output file", duration = NULL, closeButton = FALSE,type = "message")
             on.exit(removeNotification(id), add = TRUE)
-            
+
             devlist <- grDevices::dev.list()
-            sapply(devlist[names(devlist) == "pdf"], grDevices::dev.off) 
-            
+            sapply(devlist[names(devlist) == "pdf"], grDevices::dev.off)
+
             grDevices::pdf(file = file, width = 9.350, height = 7.225)
-            
+
             plots <- LEMMA:::GetPdfOutputPlots(fit = LEMMA_excel_run()$fit.extended, projection = LEMMA_excel_run()$projection, inputs = LEMMA_excel_run()$inputs)
-            
+
             grDevices::dev.off()
         },
         contentType = "application/pdf"
     )
-    
+
 
     # --------------------------------------------------------------------------------
-    # 
+    #
     #   Forecasting tab
-    # 
+    #
     # --------------------------------------------------------------------------------
-    
+
     # Forecasting
     forecast_done <- reactiveVal(value = FALSE)
     forecast_dir <- reactiveVal(value = NULL)
     observeEvent(input$forecast_run, {
-        
+
         remote <- FALSE
 
         req(length(input$forecast_select_county) > 0)
@@ -204,112 +204,112 @@ server <- function(input, output, session) {
         shinyjs::enable("forecast_run")
         shinybusy::remove_modal_spinner()
     })
-    
+
     # output: downloald excel output
     output$forecast_download_pdf_out <- downloadHandler(
         filename = function() {
             return("forecast_pdf.zip")
         },
         content = function(file) {
-            
+
             req(forecast_done())
             req(forecast_dir())
-            
+
             all_files <- list.files(paste0(forecast_dir(), "/Forecasts"))
             pdf_files <- grep(pattern = ".pdf$",x = all_files)
             req(length(pdf_files)>0)
             utils::zip(
                 zipfile = file,files = paste0(forecast_dir(),"/Forecasts/",all_files[pdf_files]),flags = "-j"
             )
-            
+
             # openxlsx::write.xlsx(LEMMA_excel_out(), file = file)
         },
         contentType = "application/zip"
     )
-    
+
     # output: downloald pdf output
     output$forecast_download_xlsx_out <- downloadHandler(
         filename = function() {
             return("forecast_xlsx.zip")
         },
         content = function(file) {
-            
+
             req(forecast_done())
             req(forecast_dir())
-            
+
             all_files <- list.files(paste0(forecast_dir(), "/Forecasts"))
             xlsx_files <- grep(pattern = ".xlsx$",x = all_files)
             req(length(xlsx_files)>0)
             utils::zip(
                 zipfile = file,files = paste0(forecast_dir(),"/Forecasts/",all_files[xlsx_files]),flags = "-j"
             )
-            
+
         },
         contentType = "application/zip"
     )
-    
-    
+
+
     # --------------------------------------------------------------------------------
-    # 
+    #
     #   Scenarios tab
-    # 
+    #
     # --------------------------------------------------------------------------------
-    
+
     # messy but no other way to get this to work.
     # the reactive values are what we want: https://stackoverflow.com/questions/41706201/shiny-numericinput-does-not-respect-min-and-max-values
-    
+
     # 1 young
     scenarios_uptake_vals <- reactiveValues(val_young = 25, val_middle = 75, val_elder = 85, min = 0, max = 100)
-    
+
     scenarios_young_uptake_value <- reactive({
         if(!is.null(input$scenarios_young_uptake)){
             if (is.na(input$scenarios_young_uptake)) {return(NULL)}
             if(input$scenarios_young_uptake < scenarios_uptake_vals$min) return(scenarios_uptake_vals$min)
-            if(input$scenarios_young_uptake > scenarios_uptake_vals$max) return(scenarios_uptake_vals$max)     
+            if(input$scenarios_young_uptake > scenarios_uptake_vals$max) return(scenarios_uptake_vals$max)
             return(input$scenarios_young_uptake)
         }else{
             return(scenarios_uptake_vals$val_young)
         }
     })
-    
-    output$scenarios_young_uptake <- renderUI(numericInput("scenarios_young_uptake", "", min = scenarios_uptake_vals$min, 
+
+    output$scenarios_young_uptake <- renderUI(numericInput("scenarios_young_uptake", "", min = scenarios_uptake_vals$min,
                                              max = scenarios_uptake_vals$max, value = scenarios_young_uptake_value()))
-    
+
     # 2. middle
     scenarios_middle_uptake_value <- reactive({
         if (!is.null(input$scenarios_middle_uptake)) {
             if (is.na(input$scenarios_middle_uptake)) {return(NULL)}
             if(input$scenarios_middle_uptake < scenarios_uptake_vals$min) return(scenarios_uptake_vals$min)
-            if(input$scenarios_middle_uptake > scenarios_uptake_vals$max) return(scenarios_uptake_vals$max)     
+            if(input$scenarios_middle_uptake > scenarios_uptake_vals$max) return(scenarios_uptake_vals$max)
             return(input$scenarios_middle_uptake)
         } else {
             return(scenarios_uptake_vals$val_middle)
         }
     })
-    
-    output$scenarios_middle_uptake <- renderUI(numericInput("scenarios_middle_uptake", "", min = scenarios_uptake_vals$min, 
+
+    output$scenarios_middle_uptake <- renderUI(numericInput("scenarios_middle_uptake", "", min = scenarios_uptake_vals$min,
                                                            max = scenarios_uptake_vals$max, value = scenarios_middle_uptake_value()))
-    
+
     # 3. elderly
     scenarios_elder_uptake_value <- reactive({
         if(!is.null(input$scenarios_elder_uptake)){
             if (is.na(input$scenarios_elder_uptake)) {return(NULL)}
             if(input$scenarios_elder_uptake < scenarios_uptake_vals$min) return(scenarios_uptake_vals$min)
-            if(input$scenarios_elder_uptake > scenarios_uptake_vals$max) return(scenarios_uptake_vals$max)     
+            if(input$scenarios_elder_uptake > scenarios_uptake_vals$max) return(scenarios_uptake_vals$max)
             return(input$scenarios_elder_uptake)
         }else{
             return(scenarios_uptake_vals$val_elder)
         }
     })
-    
-    output$scenarios_elder_uptake <- renderUI(numericInput("scenarios_elder_uptake", "", min = scenarios_uptake_vals$min, 
+
+    output$scenarios_elder_uptake <- renderUI(numericInput("scenarios_elder_uptake", "", min = scenarios_uptake_vals$min,
                                                            max = scenarios_uptake_vals$max, value = scenarios_elder_uptake_value()))
-    
+
     # scenarios
     scenarios_done <- reactiveVal(value = FALSE)
     scenarios_dir <- reactiveVal(value = NULL)
     observeEvent(input$scenarios_run, {
-        
+
         remote <- FALSE
 
         req(is.finite(scenarios_young_uptake_value()))
@@ -318,7 +318,7 @@ server <- function(input, output, session) {
 
         shinyjs::disable("scenarios_run")
         shinybusy::show_modal_spinner(spin = "fading-circle",text = "Running LEMMA scenarios")
-        
+
         ncounty <- length(input$forecast_select_county)
         writedir <- tempdir(check = TRUE)
         scenarios_dir(writedir)
@@ -327,28 +327,28 @@ server <- function(input, output, session) {
                 x = paste0(writedir,"/Scenarios"),recursive = TRUE
             )
         }
-        
+
         id1 <- showNotification("Downloading case data", duration = NULL, closeButton = FALSE,type = "message")
         on.exit(removeNotification(id1), add = TRUE)
-        
+
         county.dt <- LEMMA.forecasts:::GetCountyData(remote = remote)
         max.date <- LEMMA.forecasts:::Get1(county.dt[!is.na(hosp.conf), max(date), by = "county"]$V1)
-        
+
         id2 <- showNotification("Downloading vaccination data", duration = NULL, closeButton = FALSE,type = "message")
         on.exit(removeNotification(id2), add = TRUE)
-        
+
         doses.dt <- LEMMA.forecasts:::GetDosesData(remote = remote)
-        
+
         id3 <- showNotification("Running LEMMA scenarios", duration = NULL, closeButton = FALSE,type = "message")
         on.exit(removeNotification(id3), add = TRUE)
-        
+
         # get user input vaccine data
         vaxx_uptake <- c(scenarios_young_uptake_value(),scenarios_middle_uptake_value(),scenarios_elder_uptake_value())
-        
-        uk_growth <- input$scenarios_uk + 1
-        br_growth <- input$scenarios_br + 1
-        in_growth <- input$scenarios_in + 1
-        
+
+        uk_growth <- input$scenarios_uk / 100 + 1
+        br_growth <- input$scenarios_br / 100 + 1
+        in_growth <- input$scenarios_in / 100 + 1
+
         if (input$scenarios_show_dosing) {
             vaccine_dosing <- list(
                 vaccine_dosing_jj = input$scenarios_jj_day,
@@ -359,61 +359,61 @@ server <- function(input, output, session) {
         } else {
             vaccine_dosing <- NULL
         }
-        
+
         out <- LEMMA.forecasts:::RunOneCounty_scen_input(
             county1 = input$forecast_select_county, county.dt = county.dt,doses.dt = doses.dt,
             k_ukgrowth = uk_growth,k_brgrowth = br_growth, k_ingrowth = in_growth,
-            k_max_open = input$scenarios_reopen,
+            k_beta_mult = input$scenarios_reopen / 100 + 1,
             vaccine_uptake = vaxx_uptake, vaccine_dosing = vaccine_dosing,
             remote = remote,writedir = writedir
         )
-        
+
         scenarios_done(TRUE)
         shinyjs::enable("scenarios_run")
         shinybusy::remove_modal_spinner()
     })
-    
+
     # output: downloald excel output
     output$scenarios_download_pdf_out <- downloadHandler(
         filename = function() {
             return("scenarios_pdf.zip")
         },
         content = function(file) {
-            
+
             req(scenarios_done())
             req(scenarios_dir())
-            
+
             all_files <- list.files(paste0(scenarios_dir(), "/Scenarios"))
             pdf_files <- grep(pattern = ".pdf$",x = all_files)
             req(length(pdf_files)>0)
             utils::zip(
                 zipfile = file,files = paste0(scenarios_dir(),"/Scenarios/",all_files[pdf_files]),flags = "-j"
             )
-            
+
             # openxlsx::write.xlsx(LEMMA_excel_out(), file = file)
         },
         contentType = "application/zip"
     )
-    
+
     # output: downloald pdf output
     output$scenarios_download_xlsx_out <- downloadHandler(
         filename = function() {
             return("scenarios_xlsx.zip")
         },
         content = function(file) {
-            
+
             req(scenarios_done())
             req(scenarios_dir())
-            
+
             all_files <- list.files(paste0(scenarios_dir(), "/Scenarios"))
             xlsx_files <- grep(pattern = ".xlsx$",x = all_files)
             req(length(xlsx_files)>0)
             utils::zip(
                 zipfile = file,files = paste0(scenarios_dir(),"/Scenarios/",all_files[xlsx_files]),flags = "-j"
             )
-            
+
         },
         contentType = "application/zip"
     )
-    
+
 }

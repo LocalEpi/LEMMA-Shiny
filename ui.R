@@ -25,8 +25,8 @@ ui <- tagList(
     shinyjs::useShinyjs(),
     shinyFeedback::useShinyFeedback(),
     shiny::navbarPage(
-        "LEMMA (Local Epidemic Modeling for Management and Action)",   
-        tabPanel("LEMMA Model", 
+        "LEMMA (Local Epidemic Modeling for Management and Action)",
+        tabPanel("LEMMA Model",
                  fluidRow(
                      column(2),
                      column(
@@ -39,7 +39,7 @@ ui <- tagList(
         # --------------------------------------------------------------------------------
         # navbar: Excel interface
         # --------------------------------------------------------------------------------
-        navbarMenu("Excel Interface", 
+        navbarMenu("Excel Interface",
                    # --------------------------------------------------------------------------------
                    # tabPanel: data input
                    # --------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ ui <- tagList(
             title = "Forecasts",
             fluidRow(
                 column(
-                    
+
                     width = 4,
                     # shinyWidgets::multiInput(
                     #     inputId = "forecast_select_county", label = "California Counties:",
@@ -132,20 +132,20 @@ ui <- tagList(
                     uiOutput("scenarios_middle_uptake"),
                     HTML("<b>Vaccine uptake % (ages 65+)</b>",.noWS = "outside"),
                     uiOutput("scenarios_elder_uptake"),
-                    sliderInput("scenarios_uk", "UK variant growth rate (%)",
-                                min = 0,max = 1,value = 0),
-                    sliderInput("scenarios_br", "BR variant growth rate (%)",
-                                min = 0,max = 1,value = 0),
-                    sliderInput("scenarios_in", "IN variant growth rate (%)",
-                                min = 0,max = 1,value = 0),
-                    sliderInput("scenarios_reopen", "Reopening (%)",
-                                min = 0.5,max = 1,value = 0.75),
+                    sliderInput("scenarios_uk", "Alpha variant daily growth rate (%)",
+                                min = 0, max = 20,value = 0),
+                    sliderInput("scenarios_br", "Beta variant daily growth rate (%)",
+                                min = 0, max = 20,value = 0),
+                    sliderInput("scenarios_in", "Delta variant daily growth rate (%)",
+                                min = 0, max = 20,value = 0),
+                    sliderInput("scenarios_reopen", "Increase in effective contact rate on June 15 (%)",
+                                min = 0,max = 50,value = 10),
                     radioButtons(
                         "scenarios_show_dosing","Detailed vaccine availability",
                         choices = list("No" = FALSE, "Yes" = TRUE)
                     ),
                     conditionalPanel(
-                        condition = "input.scenarios_show_dosing == 'TRUE'", 
+                        condition = "input.scenarios_show_dosing == 'TRUE'",
                         sliderInput("scenarios_mrna_day", "Daily change in available doses (mRNA vaccines)",
                                     min = -5e3,max = 5e3,value = 0,step=1e2),
                         sliderInput("scenarios_jj_day", "Daily change in available doses (J&J vaccine)",
@@ -153,7 +153,7 @@ ui <- tagList(
                         sliderInput("scenarios_mrna_day_max", "Increase over baseline for maximum daily doses (mRNA vaccines)",
                                     min = 0,max = 1e4,value = 0,step=1e2),
                         sliderInput("scenarios_jj_day_max", "Increase over baseline for maximum daily doses (J&J vaccine)",
-                                    min = 0,max = 1e4,value = 0,step=1e2)  
+                                    min = 0,max = 1e4,value = 0,step=1e2)
                     ),
                     hr(),
                     actionButton("scenarios_run", "Run Scenario", class = "btn btn-primary btn-lg btn-block"),
@@ -167,7 +167,7 @@ ui <- tagList(
                 )
             )
         ), # end scenarios tabpanel
-        
+
         # --------------------------------------------------------------------------------
         # tabPanel: Information
         # --------------------------------------------------------------------------------
@@ -182,6 +182,6 @@ ui <- tagList(
                 column(2)
             )
         )
-        
-    ) # end navbarpage 
+
+    ) # end navbarpage
 ) # end ui definition
